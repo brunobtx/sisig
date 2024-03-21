@@ -40,3 +40,8 @@ adicionar bibliote jsonwebToken
 
 adicionar dotenv 
 - yarn add dotenv
+
+adicionar biblioteca de imagens 
+yarn add multer
+
+yarn add @types/multer -D
