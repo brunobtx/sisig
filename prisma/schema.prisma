@@ -11,69 +11,66 @@ datasource db {
 }
 
 // criar uma migration: yarn prisma migrate dev
+model Person {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @default(uuid())
+  name       String
+  cpf        String    @unique
+  phone      String
+  dt_nasc    DateTime
+  sexo       String
+  situacao   Boolean   @default(true)
+  email      String    @unique
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  user    User? // campo oposto da relação 1:1
+  Teacher Teacher?
+
+  @@map("person")
+}
+
 model User {
-  id String @id @default(uuid())
-  name String
-  email String
-  password String
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @default(uuid())
+  password   String
   created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  id_person  Int       @unique
+  person     Person    @relation(fields: [id_person], references: [id])
 
-  @@map("users")
+  @@map("user")
 }
 
-model Category{
-  id String @id @default(uuid())
-  name String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  @@map("categories")
-  products Product[]
+model Class {
+  id          Int            @id @default(autoincrement())
+  uuid        String         @unique @default(uuid())
+  name        String
+  idade_in    Int
+  idade_fn    Int
+  bo_situacao Boolean        @default(true) // ativo por padrão
+  created_at  DateTime       @default(now()) // data atual
+  teachers    ClassTeacher[] // relação via pivot
 }
 
-model Product{
-  id String @id @default(uuid())
-  name String
-  price String
-  description String
-  banner String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  category Category @relation(fields: [category_id], references: [id])
-
-  @@map("products")
-  category_id String
-  items Item[]
+model Teacher {
+  id          Int            @id @default(autoincrement())
+  uuid        String         @unique @default(uuid())
+  id_person   Int            @unique
+  bo_situacao Boolean        @default(true) // ativo por padrão
+  created_at  DateTime       @default(now()) // data atual
+  person      Person         @relation(fields: [id_person], references: [id])
+  classes     ClassTeacher[]
 }
 
-model Order{
-  id String @id @default(uuid())
-  table Int
-  status Boolean @default(false)
-  draft Boolean @default(true)
-  name String?
+model ClassTeacher {
+  id         Int    @id @default(autoincrement())
+  uuid       String @unique @default(uuid())
+  id_teacher Int
+  id_class   Int
 
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  teacher Teacher @relation(fields: [id_teacher], references: [id])
+  class   Class   @relation(fields: [id_class], references: [id])
 
-  @@map("orders")
-  items Item[]
-}
-
-model Item{
-  id String @id @default(uuid())
-  amount Int
-
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  order Order @relation(fields: [order_id], references: [id])
-  product Product @relation(fields: [product_id], references: [id])
-
-  @@map("items")
-  order_id String
-  product_id String
-
+  @@unique([id_teacher, id_class]) // evita duplicados
 }
