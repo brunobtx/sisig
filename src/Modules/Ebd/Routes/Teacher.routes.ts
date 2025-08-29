@@ -1,6 +1,6 @@
 
 import { CreateTeacherController} from '../Teachers/Controller/CreateTeacherController';
-import { isAutenticated } from "../../../Common/Middilawere/isAuthenticated"
+import { isAutenticated } from "../../../Common/Middleware/isAuthenticated"
 import { Router } from 'express';
 
 const routerTeacher = Router();

@@ -26,6 +26,7 @@ model Person {
 
   user    User? // campo oposto da relação 1:1
   Teacher Teacher?
+  student Student?
 
   @@map("person")
 }
@@ -43,14 +44,17 @@ model User {
 }
 
 model Class {
-  id          Int            @id @default(autoincrement())
-  uuid        String         @unique @default(uuid())
-  name        String
-  idade_in    Int
-  idade_fn    Int
-  bo_situacao Boolean        @default(true) // ativo por padrão
-  created_at  DateTime       @default(now()) // data atual
-  teachers    ClassTeacher[] // relação via pivot
+  id           Int            @id @default(autoincrement())
+  uuid         String         @unique @default(uuid())
+  name         String
+  idade_in     Int
+  idade_fn     Int
+  bo_situacao  Boolean        @default(true) // ativo por padrão
+  created_at   DateTime       @default(now()) // data atual
+  teachers     ClassTeacher[] // relação via pivot
+  ClassStudent ClassStudent[]
+
+  @@map("class")
 }
 
 model Teacher {
@@ -61,6 +65,8 @@ model Teacher {
   created_at  DateTime       @default(now()) // data atual
   person      Person         @relation(fields: [id_person], references: [id])
   classes     ClassTeacher[]
+
+  @@map("teacher")
 }
 
 model ClassTeacher {
@@ -73,4 +79,31 @@ model ClassTeacher {
   class   Class   @relation(fields: [id_class], references: [id])
 
   @@unique([id_teacher, id_class]) // evita duplicados
+  @@map("class_teacher")
+}
+
+model Student {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  id_person   Int       @unique
+  created_at  DateTime? @default(now())
+  bo_situacao Boolean   @default(true)
+
+  person  Person         @relation(fields: [id_person], references: [id])
+  classes ClassStudent[]
+
+  @@map("student")
+}
+
+model ClassStudent {
+  id         Int    @id @default(autoincrement())
+  uuid       String @unique @default(uuid())
+  id_student Int
+  id_class   Int
+
+  student Student @relation(fields: [id_student], references: [id])
+  class   Class   @relation(fields: [id_class], references: [id])
+
+  @@unique([id_student, id_class])
+  @@map("class_student")
 }

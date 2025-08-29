@@ -8,9 +8,7 @@ interface UserRequest {
 
 class CreateUserService {
   async execute({ id_person, password }: UserRequest) {
-    if (!id_person) {
-        throw new Error("ID da pessoa obrigatório!")
-    }
+    
     if (!password) {
         throw new Error("Senha obrigatória!")
     }
@@ -23,7 +21,6 @@ class CreateUserService {
         throw new Error("Usuário já existe para esta pessoa!")
     }
 
-    // Hash da senha
     const passwordHash = await hash(password, 8)
 
     // Criação do usuário

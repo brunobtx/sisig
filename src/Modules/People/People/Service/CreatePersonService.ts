@@ -14,19 +14,6 @@ export class CreatePersonService {
     async execute(data: PersonRequest) {
         const { name, cpf, email, phone, dt_nasc, sexo, situacao } = data
 
-        if (!name) {
-            throw new Error("Nome deve ser obrigatório!")
-        }
-         if (!cpf) {
-            throw new Error("Cpf deve ser obrigatório!")
-        }
-         if (!email) {
-            throw new Error("Email deve ser obrigatório!")
-        }
-         if (!phone) {
-            throw new Error("Telefone deve ser obrigatório!")
-        }
-
         const emailAlreadyExists = await prismaClient.person.findFirst({
             where: { email }
         })
