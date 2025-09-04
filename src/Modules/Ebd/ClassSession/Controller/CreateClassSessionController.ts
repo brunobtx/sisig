@@ -1,7 +1,7 @@
 import { CreateClassSessionService } from '../Service/CreateClassSessionService';
 import { Request, Response } from 'express';
 
-export class CreateClassController {
+export class CreateClassSessionController {
   async handle(req: Request, res: Response) {
     const { id_class, dt_session, nr_lesson, topic, id_teacher, notes, id_person } = req.body;
 

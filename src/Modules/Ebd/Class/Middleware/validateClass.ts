@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ClassValidatorFactory } from '../Validator/classValidate';
+import { ClassValidatorFactory } from '../Validator/classValidator';
 
 export function validateClass() {
   return (req: Request, res: Response, next: NextFunction) => {

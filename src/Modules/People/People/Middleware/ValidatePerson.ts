@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PersonValidatorFactory } from '../Validators/PersonValidator';
+import { PersonValidatorFactory } from '../Validator/PersonValidator';
 
 export function validatePerson() {
   return (req: Request, res: Response, next: NextFunction) => {

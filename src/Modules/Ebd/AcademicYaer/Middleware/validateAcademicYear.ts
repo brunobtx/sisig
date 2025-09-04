@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserValidatorFactory } from '../Validator/userValidator';
+import { AcademicYearValidatorFactory } from '../Validator/academicYearValidator';
 
-export function validateUser() {
+export function validateAcademicYear() {
   return (req: Request, res: Response, next: NextFunction) => {
-    const validator = UserValidatorFactory.create();
+    const validator = AcademicYearValidatorFactory.create();
 
     const isValid = validator.validate(req.body);
 

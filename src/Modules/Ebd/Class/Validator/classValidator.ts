@@ -8,7 +8,7 @@ import {
   MinLength,
   maxLength,
 } from "class-validator";
-import { ClassValidatorFields } from "../../../../Common/Domain/classValidatorFields";
+import { ClassValidatorFields } from "../../../../Common/Domain/Validators/classValidatorFields";
 import { Type } from "class-transformer";
 
 // Definindo o tipo de dados que o validator vai receber
