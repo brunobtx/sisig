@@ -1,6 +1,6 @@
 import { number } from "joi";
 import prismaClient from "../../../../prisma";
-import { BadRequestError } from "../../../../Common/Application/Errors/BadRequestError";
+import { BadRequestError } from "../../../../Common/Application/Errors/badRequestError";
 import { DateUtils } from "../../../../Common/Helper/dateUltilHelper"
 
 interface AcademicPeriod {

@@ -1,4 +1,4 @@
-import { ValidatorFieldsInterface } from '../classValidatorFieldsInterface'
+import { ValidatorFieldsInterface } from './classValidatorFieldsInterface'
 import { validateSync } from 'class-validator'
 
 export type FieldErrors = {

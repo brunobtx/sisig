@@ -1,6 +1,7 @@
 import prismaClient from "../../../../prisma";
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken'
+import { BadRequestError } from "../../../../Common/Application/Errors/badRequestError";
 
 
 interface AuthRequest{
@@ -17,7 +18,7 @@ interface AuthRequest{
             }
         })
         if (!person){
-            throw new Error("Email Não Cadastrado no Sistema")
+            throw new BadRequestError("Email Não Cadastrado no Sistema")
         }   
         const user = await prismaClient.user.findFirst({
             where:{
@@ -25,12 +26,12 @@ interface AuthRequest{
             }
         })
         if (!user){
-            throw new Error("Usuário Não existe no Sistema")
+            throw new BadRequestError("Usuário Não existe no Sistema")
         }
         const passwordMath = await compare(password, user.password)
 
         if (!passwordMath){
-            throw new Error("Usuario/Senha Incorretas")
+            throw new BadRequestError("Usuario/Senha Incorretas")
         }
 
         const token = sign({
