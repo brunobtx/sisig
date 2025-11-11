@@ -4,6 +4,7 @@ import { PersonEntity } from '../Entity/personEntity';
 function toEntity(person: any): PersonEntity {
   return new PersonEntity(
     {
+      id: person.id,
       name: person.name,
       cpf: person.cpf,
       email: person.email,

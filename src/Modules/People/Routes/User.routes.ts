@@ -8,7 +8,7 @@ import { validateUser } from '../Users/Middleware/validateUser';
 const routerUser = Router();
 
 //--ROTAS USER --//
-routerUser.post('/user', validateUser(), new CreateUserController().headle)
+routerUser.post('/user', isAutenticated, validateUser(), new CreateUserController().headle)
 routerUser.post('/session', new AuthUSerController().handle)
 routerUser.get('/details',isAutenticated, new DetailUserController().handle)
 

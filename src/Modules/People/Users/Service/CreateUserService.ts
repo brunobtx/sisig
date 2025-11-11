@@ -1,41 +1,40 @@
-import prismaClient from '../../../../prisma'
-import { hash } from 'bcryptjs'
+import { hash } from 'bcryptjs';
+import { UserRepository } from '../Repository/userRepository';
+import { UserEntity } from '../Entity/userEntity';
+import { BadRequestError } from '../../../../Common/Application/Errors/badRequestError';
 
 interface UserRequest {
-  id_person: number
-  password: string
+  id_person: number;
+  password: string;
 }
 
-class CreateUserService {
+export class CreateUserService {
+  constructor(private readonly repository: UserRepository) {}
+
   async execute({ id_person, password }: UserRequest) {
-    
     if (!password) {
-        throw new Error("Senha obrigatória!")
+      throw new BadRequestError('Senha obrigatória!');
     }
 
     // Verifica se já existe usuário para essa pessoa
-    const userAlreadyExists = await prismaClient.user.findFirst({
-      where: { id_person }
-    })
+    const userAlreadyExists = await this.repository.findByIdPerson(id_person);
     if (userAlreadyExists) {
-        throw new Error("Usuário já existe para esta pessoa!")
+      throw new BadRequestError('Usuário já existe para esta pessoa!');
     }
 
-    const passwordHash = await hash(password, 8)
+    // Criptografa senha
+    const passwordHash = await hash(password, 8);
 
-    // Criação do usuário
-    const user = await prismaClient.user.create({
-      data: {
-        password: passwordHash,
-        id_person
-      },
-      include: {
-        person: true
-      }
-    })
+    // Cria entidade de domínio
+    const userEntity = new UserEntity({
+      id_person,
+      password: passwordHash,
+      created_at: new Date(),
+    });
 
-    return user
+    // Persiste no banco via repositório
+    const createdUser = await this.repository.create(userEntity);
+
+    return createdUser;
   }
 }
-
-export { CreateUserService }

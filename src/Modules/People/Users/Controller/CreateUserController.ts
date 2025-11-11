@@ -1,17 +1,24 @@
-import { Request, response, Response } from "express";
-import { CreateUserService } from  '../Service/CreateUserService'
-class CreateUserController 
-{
-    async headle(req: Request, res: Response){
-       // return res.json({ok: true})
-      const {password, id_person }= req.body
+import { Request, Response } from 'express';
+import { CreateUserService } from '../Service/CreateUserService';
+import { PrismaUserRepository } from '../Repository/userRepository';
+import { UserValidatorFactory } from '../Validator/userValidator';
 
-      const createUserService = new CreateUserService();
-      const user =  await createUserService.execute({password,id_person});
+export class CreateUserController {
+  private validator = UserValidatorFactory.create();
+  
+  async handle(req: Request, res: Response) {
+    const { password, id_person } = req.body;
 
-      return res.json(user)
+    const repository = new PrismaUserRepository();
+    const createUserService = new CreateUserService(repository);
 
+    const isValid = this.validator.validate(req.body);
+    if (!isValid) {
+      return res.status(400).json({ errors: this.validator.errors });
     }
-}
 
-export {CreateUserController}
+    const user = await createUserService.execute({ password, id_person });
+
+    return res.status(201).json(user);
+  }
+}
