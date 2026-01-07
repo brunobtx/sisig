@@ -1,8 +1,8 @@
 import {Request, Response} from 'express'
-import { DeletePersonService } from '../Service/deletePersonService'
-import { PersonInput } from '../Dto/deletePersonInput'
-import prismaClient from "../../../../prisma";
-import { BadRequestError } from '../../../../Common/Application/Errors/badRequestError';
+import { DeletePersonService } from '../../../Application/UseCases/deletePersonUseCase'
+import { PersonInput } from '../../../Application/Dto/deletePersonInput'
+import prismaClient from "../../../../../../prisma";
+import { BadRequestError } from '../../../../../../Common/Application/Errors/badRequestError';
 
 export class DeletePersonController{
     async handle(req: Request, res: Response){

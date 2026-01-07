@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
-import { AuthUSerService } from "../Service/authUserService";
+import { AuthUserService } from "../Service/authUserService";
+import { PrismaPersonRepository } from "../../People/Domain/Repository/personRepository";
+import { PrismaUserRepository } from "../Repository/userRepository";
 
-class AuthUSerController{
-    async handle(req: Request, res: Response){
-        const {email, password} = req.body;
+export class AuthUserController {
+  async handle(req: Request, res: Response) {
+    const { email, password } = req.body;
 
-        const authUSerService = new AuthUSerService;
-        const auth =  await authUSerService.execute({
-            email, 
-            password
-        })
+    const authUserService = new AuthUserService(
+      new PrismaPersonRepository(),
+      new PrismaUserRepository()
+    );
+    const auth = await authUserService.execute({
+      email,
+      password,
+    });
 
-        return res.json(auth)
-    }
+    return res.json(auth);
+  }
 }
-
-export { AuthUSerController }

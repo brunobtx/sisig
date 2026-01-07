@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ListPersonService } from "../Service/listPersonService";
+import { ListPersonService } from "../../../Application/UseCases/listPersonUseCase";
 
 export class ListPersonController {
   async handle(req: Request, res: Response): Promise<Response> {

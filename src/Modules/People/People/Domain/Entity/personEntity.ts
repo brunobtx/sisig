@@ -1,4 +1,4 @@
-import { Entity } from "../../../../Common/Domain/Entities/entity";
+import { Entity } from "../../../../../Common/Domain/Entities/entity";
 
 export type PersonProps = {
   id: number;

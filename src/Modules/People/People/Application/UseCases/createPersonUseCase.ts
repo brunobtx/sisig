@@ -1,5 +1,5 @@
-import { PersonRepository } from '../Repository/personRepository';
-import { PersonEntity, PersonProps } from '../Entity/personEntity';
+import { PersonRepository } from '../../Domain/Repository/personRepository';
+import { PersonEntity, PersonProps } from '../../Domain/Entity/personEntity';
 import { PersonInput } from '../Dto/personInput';
 
 export class CreatePersonService {

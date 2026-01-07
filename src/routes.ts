@@ -10,7 +10,7 @@ import { routerStudent } from "./Modules/Ebd/Routes/student.routes"
 import { routerClassSession } from "./Modules/Ebd/Routes/classSession.routes"
 
 import uploadConfig from './config/multer'
-import { routerPerson } from "./Modules/People/Routes/Person.routes"
+import { routerPerson } from "./Modules/People/People/Infra/Http/routes"
 import { routerLesson } from "./Modules/Ebd/Routes/lesson.routes"
 import { routerAcademic } from "./Modules/Ebd/Routes/academicYear.routes"
 

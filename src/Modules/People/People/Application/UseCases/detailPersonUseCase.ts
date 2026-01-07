@@ -1,6 +1,6 @@
-import { PrismaPersonRepository } from "../Repository/personRepository";
+import { PrismaPersonRepository } from "../../Domain/Repository/personRepository";
 import { PersonOutput } from "../Dto/personOutput";
-import { BadRequestError } from "../../../../Common/Application/Errors/badRequestError";
+import { BadRequestError } from "../../../../../Common/Application/Errors/badRequestError";
 
 export class DetailPersonService {
   private repository: PrismaPersonRepository;

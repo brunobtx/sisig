@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DetailPersonService } from "../Service/detailPersonService";
+import { DetailPersonService } from "../../../Application/UseCases/detailPersonUseCase";
 
 export class DetailPersonController {
   async handle(req: Request, res: Response): Promise<Response> {

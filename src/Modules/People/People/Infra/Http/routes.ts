@@ -1,10 +1,10 @@
-import { isAutenticated } from "../../../Common/Middleware/isAuthenticated"
+import { isAutenticated } from "../../../../../Common/Middleware/isAuthenticated";
 import { Router } from 'express';
-import { CreatePersonController} from '../People/Controller/createPersonController'
-import { DeletePersonController } from '../People/Controller/deletePersonController';
-import { UpdatePersonController } from "../People/Controller/updatePersonController";
-import { ListPersonController } from "../People/Controller/listPersonController";
-import { DetailPersonController } from "../People/Controller/detailPersonController";
+import { CreatePersonController} from '..//Http/Controller/createPersonController'
+import { DeletePersonController } from '../Http/Controller/deletePersonController';
+import { UpdatePersonController } from "../Http/Controller/updatePersonController";
+import { ListPersonController } from "../Http/Controller/listPersonController";
+import { DetailPersonController } from "../Http/Controller/detailPersonController";
 
 const routerPerson = Router();
 

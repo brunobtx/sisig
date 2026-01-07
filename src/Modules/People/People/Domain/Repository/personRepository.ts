@@ -1,4 +1,4 @@
-import prismaClient from '../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import { PersonEntity } from '../Entity/personEntity';
 
 function toEntity(person: any): PersonEntity {

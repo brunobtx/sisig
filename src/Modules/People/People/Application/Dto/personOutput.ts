@@ -1,4 +1,4 @@
-import { PersonEntity } from '../Entity/personEntity'
+import { PersonEntity } from '../../Domain/Entity/personEntity'
 
 export type PersonOutput = {
   id: string

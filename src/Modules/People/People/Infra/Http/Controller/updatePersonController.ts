@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { UpdatePersonService } from '../Service/updatePersonService';
-import { PersonInput } from '../Dto/personInput';
+import { UpdatePersonService } from '../../../Application/UseCases/updatePersonUseCase';
+import { PersonInput } from '../../../Application/Dto/personInput';
 import { PersonValidatorFactory } from '../Validator/PersonValidator';
-import { PersonOutputMapper } from '../Dto/personOutput';
+import { PersonOutputMapper } from '../../../Application/Dto/personOutput';
 
 export class UpdatePersonController {
   async handle(req: Request, res: Response) {

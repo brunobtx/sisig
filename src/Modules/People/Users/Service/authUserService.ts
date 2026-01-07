@@ -1,7 +1,7 @@
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { BadRequestError } from '../../../../Common/Application/Errors/badRequestError';
-import { PersonRepository } from '../../People/Repository/personRepository';
+import { PersonRepository } from '../../People/Domain/Repository/personRepository';
 import { UserRepository } from '../Repository/userRepository';
 
 interface AuthRequest {

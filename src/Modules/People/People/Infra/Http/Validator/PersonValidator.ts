@@ -8,8 +8,8 @@ import {
   IsEmail,
   IsDateString,
 } from "class-validator";
-import { ClassValidatorFields } from "../../../../Common/Domain/Validators/classValidatorFields";
-import { IsCPF } from "../../../../Common/Helper/isCpfDecorator";
+import { ClassValidatorFields } from "../../../../../../Common/Domain/Validators/classValidatorFields";
+import { IsCPF } from "../../../../../../Common/Helper/isCpfDecorator";
 
 export interface PersonInput {
   name: string;

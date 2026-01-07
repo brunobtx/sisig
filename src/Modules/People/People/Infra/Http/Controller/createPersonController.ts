@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { PersonValidatorFactory } from "../Validator/PersonValidator";
-import { CreatePersonService } from "../Service/createPersonService";
-import { PrismaPersonRepository } from "../Repository/personRepository";
-import { PersonOutputMapper } from "../Dto/personOutput";
+import { PersonValidatorFactory } from "../../Http/Validator/PersonValidator";
+import { CreatePersonService } from "../../../Application/UseCases/createPersonUseCase";
+import { PrismaPersonRepository } from "../../../Domain/Repository/personRepository";
+import { PersonOutputMapper } from "../../../Application/Dto/personOutput";
 
 export class CreatePersonController {
   private service: CreatePersonService;

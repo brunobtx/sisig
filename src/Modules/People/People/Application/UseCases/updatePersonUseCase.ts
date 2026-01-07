@@ -1,7 +1,7 @@
-import prismaClient from '../../../../prisma';
-import { PersonEntity, PersonProps } from '../Entity/personEntity';
+import prismaClient from '../../../../../prisma';
+import { PersonEntity, PersonProps } from '../../Domain/Entity/personEntity';
 import { PersonInput } from '../Dto/personInput';
-import { BadRequestError } from '../../../../Common/Application/Errors/badRequestError';
+import { BadRequestError } from '../../../../../Common/Application/Errors/badRequestError';
 
 export class UpdatePersonService {
   async execute(id: string, data: PersonInput): Promise<PersonEntity> {
@@ -60,6 +60,7 @@ export class UpdatePersonService {
     // 5️⃣ Reconstrói a Entity a partir do que veio do banco
     return new PersonEntity(
       {
+        id: updated.id,
         name: updated.name,
         cpf: updated.cpf,
         email: updated.email,
