@@ -1,18 +1,17 @@
 import { MaxLength, IsString, IsNotEmpty, IsOptional, IsDate, IsNumber, MinLength } from 'class-validator'
-import { ClassValidatorFields } from '../../../../Common/Domain/Validators/classValidatorFields'
+import { ClassValidatorFields } from '../../../../../../Common/Domain/Validators/classValidatorFields'
 
 export interface UserInput {
-  name: string
-  email: string
+  id_person: number
   password: string
-  createdAt?: Date
 }
+
 
 export class UserRules {
 
-  @IsNumber()
+  @IsNumber({}, { message: "O campo Pessoa deve ser um número válido." })
   @IsNotEmpty({ message: "O campo Pessoa é obrigatório." })
-  id_person: string
+  id_person: number
 
   @IsString({ message: "A senha deve ser um texto válido." })
   @MinLength(6, { message: "A senha deve ter no mínimo 6 caracteres." })

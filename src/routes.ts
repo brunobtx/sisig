@@ -3,7 +3,7 @@ import multer from "multer"
 
 import { isAutenticated } from "./Common/Middleware/isAuthenticated"
 
-import { routerUser } from "./Modules/People/Routes/User.routes"
+import { routerUser } from "./Modules/People/Users/Infra/Http/routes"
 import { routerClass } from "./Modules/Ebd/Routes/classe.routes"
 import { routerTeacher } from "./Modules/Ebd/Routes/teacher.routes"
 import { routerStudent } from "./Modules/Ebd/Routes/student.routes"

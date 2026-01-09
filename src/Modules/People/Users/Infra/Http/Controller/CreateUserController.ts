@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { CreateUserService } from '../Service/CreateUserService';
-import { PrismaUserRepository } from '../Repository/userRepository';
+import { CreateUserService } from '../../../Application/UseCases/createUserUseCase';
+import { PrismaUserRepository } from '../../../Domain/Repository/userRepository';
 import { UserValidatorFactory } from '../Validator/userValidator';
 
 export class CreateUserController {
   private validator = UserValidatorFactory.create();
   
-  async handle(req: Request, res: Response) {
+  handle = async (req: Request, res: Response) => {
     const { password, id_person } = req.body;
 
     const repository = new PrismaUserRepository();

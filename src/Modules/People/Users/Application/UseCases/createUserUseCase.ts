@@ -1,7 +1,7 @@
 import { hash } from 'bcryptjs';
-import { UserRepository } from '../Repository/userRepository';
-import { UserEntity } from '../Entity/userEntity';
-import { BadRequestError } from '../../../../Common/Application/Errors/badRequestError';
+import { UserRepository } from '../../Domain/Repository/userRepository';
+import { UserEntity } from '../../Domain/Entity/userEntity';
+import { BadRequestError } from '../../../../../Common/Application/Errors/badRequestError';
 
 interface UserRequest {
   id_person: number;

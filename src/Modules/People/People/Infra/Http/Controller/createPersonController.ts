@@ -13,8 +13,7 @@ export class CreatePersonController {
     this.service = new CreatePersonService(repository);
   }
 
-  async handle(req: Request, res: Response): Promise<Response> {
-    // ✅ Converte e valida
+  handle = async (req: Request, res: Response): Promise<Response> => {
     const isValid = this.validator.validate(req.body);
     if (!isValid) {
       return res.status(400).json({ errors: this.validator.errors });
@@ -26,5 +25,5 @@ export class CreatePersonController {
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
-  }
+  };
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { AuthUserService } from "../Service/authUserService";
-import { PrismaPersonRepository } from "../../People/Domain/Repository/personRepository";
-import { PrismaUserRepository } from "../Repository/userRepository";
+import { AuthUserService } from "../../../Application/UseCases/authUserUseCase";
+import { PrismaPersonRepository } from "../../../../People/Domain/Repository/personRepository";
+import { PrismaUserRepository } from "../../../Domain/Repository/userRepository";
 
 export class AuthUserController {
   async handle(req: Request, res: Response) {

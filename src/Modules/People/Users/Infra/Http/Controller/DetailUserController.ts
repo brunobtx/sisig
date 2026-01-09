@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DetailUserService } from "../Service/DetailUSerService";
+import { DetailUserService } from "../../../Application/UseCases/detailUserUseCase";
 
 class DetailUserController{
     async handle(req: Request, res: Response){

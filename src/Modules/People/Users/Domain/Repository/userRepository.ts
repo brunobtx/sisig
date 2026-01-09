@@ -1,5 +1,5 @@
 import { hash } from 'bcryptjs';
-import prismaClient from '../../../../prisma';
+import prismaClient from '../../../../../prisma';
 import { UserEntity } from '../Entity/userEntity';
 
 // Conversão entre resultado do Prisma e entidade de domínio
