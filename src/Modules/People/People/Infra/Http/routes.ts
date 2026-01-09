@@ -13,6 +13,6 @@ routerPerson.post('/person/create', isAutenticated, new CreatePersonController()
 routerPerson.post('/person/delete', isAutenticated, new DeletePersonController().handle)
 routerPerson.post('/person/update', isAutenticated, new UpdatePersonController().handle)
 routerPerson.get('/person', isAutenticated, new ListPersonController().handle)
-routerPerson.get('/person/detail', isAutenticated, new DetailPersonController().handle)
+routerPerson.get('/person/:id', isAutenticated, new DetailPersonController().handle)
 
 export{ routerPerson }
