@@ -7,8 +7,8 @@ import { Router } from 'express';
 const routerUser = Router();
 
 //--ROTAS USER --//
-routerUser.post('/user/create', isAutenticated, new CreateUserController().handle)
+routerUser.post('/users', isAutenticated, new CreateUserController().handle)
 routerUser.post('/session', new AuthUserController().handle)
-routerUser.get('/details',isAutenticated, new DetailUserController().handle)
+routerUser.get('/users/:uuid',isAutenticated, new DetailUserController().handle)
 
 export{ routerUser }

@@ -4,10 +4,10 @@ import { DetailUserService } from "../../../Application/UseCases/detailUserUseCa
 class DetailUserController{
     async handle(req: Request, res: Response){
 
-        const userId = req.userId
+        const userId = req.params.uuid;
 
-        const DetailUSerService = new DetailUserService();
-        const user = await DetailUSerService.execute(userId);
+        const detailUserService = new DetailUserService();
+        const user = await detailUserService.execute(userId);
     return res.json(user)}
 }
 

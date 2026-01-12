@@ -7,6 +7,7 @@ function toEntity(user: any): UserEntity {
   return new UserEntity(
     {
       id_person: user.id_person,
+      uuid: user.uuid,
       password: user.password,
       created_at: user.created_at
     },
@@ -17,6 +18,7 @@ function toEntity(user: any): UserEntity {
 // Interface do repositório
 export interface UserRepository {
   findById(id: number): Promise<UserEntity | null>;
+  findByUuid(uuid: string): Promise<UserEntity | null>;
   findAll(): Promise<UserEntity[]>;
   create(user: UserEntity): Promise<UserEntity>;
   update(user: UserEntity): Promise<UserEntity>;
@@ -29,6 +31,11 @@ export class PrismaUserRepository implements UserRepository {
 
   async findById(id: number): Promise<UserEntity | null> {
     const user = await prismaClient.user.findUnique({ where: { id } });
+    return user ? toEntity(user) : null;
+  }
+
+   async findByUuid(uuid: string): Promise<UserEntity | null> {
+    const user = await prismaClient.user.findUnique({ where: { uuid } });
     return user ? toEntity(user) : null;
   }
 

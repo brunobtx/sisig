@@ -1,26 +1,29 @@
+import { PrismaUserRepository } from "../../Domain/Repository/userRepository";
+import { UserOutput } from "../Dto/userOutput";
+import { BadRequestError } from "../../../../../Common/Application/Errors/badRequestError";
+import { PrismaPersonRepository } from "../../../People/Domain/Repository/personRepository";
 
-import prismaClient from "../../../../../prisma";
+export class DetailUserService {
+  private repository: PrismaUserRepository;
+  private personRepository: PrismaPersonRepository;
 
-class DetailUserService{
-    async execute(userId: string){
+  constructor() {
+    this.repository = new PrismaUserRepository();
+    this.personRepository = new PrismaPersonRepository();
+  }
 
-        const user = await prismaClient.user.findFirst({
-            where:{
-                uuid: userId
-            }
-        })
-        const person = await prismaClient.person.findFirst({
-            where:{
-                id: user.id_person
-            },
-            select:{
-                id: true,
-                name: true,
-                email: true
-            }
-        })
-        return user
+  async execute(userId: string): Promise<UserOutput> {
+    const user = await this.repository.findByUuid(userId);
+
+    if (!user) {
+      throw new BadRequestError("Usuário não encontrado");
     }
-}
+    const person = await this.personRepository.findById(user.id_person);
 
-export { DetailUserService }
+    return {
+      uuid: user.uuid,
+      email: person.email,
+      situacao: person.situacao
+    };
+  }
+}
