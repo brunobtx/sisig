@@ -1,21 +1,15 @@
-import {Request, Response} from 'express'
-import { DeletePersonService } from '../../../Application/UseCases/deletePersonUseCase'
-import { PersonInput } from '../../../Application/Dto/deletePersonInput'
-import prismaClient from "../../../../../../prisma";
-import { BadRequestError } from '../../../../../../Common/Application/Errors/badRequestError';
+import { Request, Response } from "express";
+import { DeletePersonService } from "../../../Application/UseCases/deletePersonUseCase";
 
-export class DeletePersonController{
-    async handle(req: Request, res: Response){
-        const idPerson: PersonInput = req.body;
-
-        const personData = await prismaClient.person.findUnique({ where:  idPerson  });
-        if (!personData) {
-            throw new BadRequestError('Pessoa não existe na base de dados')
-        }
-        const deletePerson = new DeletePersonService();
-
-        const person = await deletePerson.execute(idPerson);
-
-        return res.json(person);
+export class DeletePersonController {
+  async handle(req: Request, res: Response) {
+    try {
+      const uuid: string = req.params.uuid;
+      const deletePerson = new DeletePersonService();
+      const person = await deletePerson.execute(uuid);
+      return res.json(person);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
     }
+  }
 }

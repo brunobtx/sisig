@@ -3,16 +3,16 @@ import { DetailPersonService } from "../../../Application/UseCases/detailPersonU
 
 export class DetailPersonController {
   handle = async (req: Request, res: Response): Promise<Response> => {
-    const idNumeric = Number(req.params.id);
+    const uuid = req.params.uuid;
 
-    if (!idNumeric || isNaN(idNumeric)) {
-      return res.status(400).json({ message: "ID inválido" });
+    if (!uuid) {
+      return res.status(400).json({ message: "UUID inválido" });
     }
 
     const service = new DetailPersonService();
 
     try {
-      const person = await service.execute(idNumeric);
+      const person = await service.execute(uuid);
       return res.status(200).json(person);
     } catch (error: any) {
       return res.status(404).json({ message: error.message });

@@ -2,6 +2,7 @@ import { Entity } from "../../../../../Common/Domain/Entities/entity";
 
 export type PersonProps = {
   id: number;
+  uuid?: string;
   name: string;
   cpf: string;
   email: string;
@@ -18,6 +19,7 @@ export class PersonEntity extends Entity<PersonProps> {
     this.props.createdAt = this.props.createdAt ?? new Date();
   }
 
+   get uuid() { return this.props.uuid; }
   get name() { return this.props.name; }
   get cpf() { return this.props.cpf; }
   get email() { return this.props.email; }

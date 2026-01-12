@@ -8,11 +8,14 @@ import { DetailPersonController } from "../Http/Controller/detailPersonControlle
 
 const routerPerson = Router();
 
-//--ROTAS PERSON --//
-routerPerson.post('/person/create', isAutenticated, new CreatePersonController().handle)
-routerPerson.post('/person/delete', isAutenticated, new DeletePersonController().handle)
-routerPerson.post('/person/update', isAutenticated, new UpdatePersonController().handle)
-routerPerson.get('/person', isAutenticated, new ListPersonController().handle)
-routerPerson.get('/person/:id', isAutenticated, new DetailPersonController().handle)
+routerPerson.use(isAutenticated);
+
+//-- ROTAS PERSON --//
+routerPerson.post('/persons', new CreatePersonController().handle);
+routerPerson.get('/persons', new ListPersonController().handle);
+routerPerson.get('/persons/:uuid', new DetailPersonController().handle);
+routerPerson.patch('/persons/:uuid', new UpdatePersonController().handle);
+routerPerson.delete('/persons/:uuid', new DeletePersonController().handle);
+
 
 export{ routerPerson }

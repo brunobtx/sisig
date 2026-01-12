@@ -5,6 +5,7 @@ function toEntity(person: any): PersonEntity {
   return new PersonEntity(
     {
       id: person.id,
+      uuid: person.uuid,
       name: person.name,
       cpf: person.cpf,
       email: person.email,
@@ -27,11 +28,17 @@ export interface PersonRepository {
   update(person: PersonEntity): Promise<PersonEntity>;
   delete(id: string): Promise<void>;
   emailExists(email: string): Promise<boolean>;
+  findByUUID(uuid: string): Promise<PersonEntity | null>;
 }
 
 export class PrismaPersonRepository implements PersonRepository {
   async findById(id: number): Promise<PersonEntity | null> {
     const person = await prismaClient.person.findUnique({ where: { id: id } });
+    return person ? toEntity(person) : null;
+  }
+
+  async findByUUID(uuid: string): Promise<PersonEntity | null> {
+    const person = await prismaClient.person.findUnique({ where: { uuid } });
     return person ? toEntity(person) : null;
   }
 
@@ -85,6 +92,13 @@ export class PrismaPersonRepository implements PersonRepository {
 
   async delete(id: string): Promise<void> {
     await prismaClient.person.delete({ where: { uuid: id } });
+  }
+
+  async inactivatePerson(uuid: string): Promise<void> {
+    await prismaClient.person.update({
+      where: { uuid },
+      data: { situacao: false } // ou active: false, se tiver campo boolean
+    });
   }
 
   async emailExists(email: string): Promise<boolean> {

@@ -9,8 +9,8 @@ export class DetailPersonService {
     this.repository = new PrismaPersonRepository();
   }
 
-  async execute(id: number): Promise<PersonOutput> {
-    const person = await this.repository.findById(id);
+  async execute(uuid: string): Promise<PersonOutput> {
+    const person = await this.repository.findByUUID(uuid);
 
     if (!person) {
       throw new BadRequestError("Pessoa não encontrada");
@@ -21,6 +21,7 @@ export class DetailPersonService {
       name: person.name,
       cpf: person.cpf,
       email: person.email,
+      situacao: person.situacao,
     };
   }
 }

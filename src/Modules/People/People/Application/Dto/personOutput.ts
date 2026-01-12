@@ -1,10 +1,11 @@
 import { PersonEntity } from '../../Domain/Entity/personEntity'
 
 export type PersonOutput = {
-  id: string
-  name: string
-  email: string
-  cpf: string
+  id: string;    // UUID
+  name: string;
+  email: string;
+  cpf: string;
+  situacao?: boolean;
 }
 
 export class PersonOutputMapper {
@@ -13,7 +14,8 @@ export class PersonOutputMapper {
       id: entity.id,
       name: entity.name,
       email: entity.email,
-      cpf: entity.cpf
+      cpf: entity.cpf,
+      situacao: entity.situacao,
     }
   }
 }
