@@ -1,31 +1,27 @@
-import { Router} from "express"
-import multer from "multer"
+import { Router } from "express"
 
-import { isAutenticated } from "./Common/Middleware/isAuthenticated"
+import { userRoutes } from "./modules/people/user/presentation/routes/user.routes"
+import { classRoutes } from "./modules/ebd/class/presentation/routes/class.routes"
+import { teacherRoutes } from "./modules/ebd/teacher/presentation/routes/teacher.routes"
+import { studentRoutes } from "./modules/ebd/student/presentation/routes/student.routes"
+import { classSessionRoutes } from "./modules/ebd/class-session/presentation/routes/class-session.routes"
 
-import { routerUser } from "./Modules/People/Users/Infra/Http/routes"
-import { routerClass } from "./Modules/Ebd/Routes/classe.routes"
-import { routerTeacher } from "./Modules/Ebd/Routes/teacher.routes"
-import { routerStudent } from "./Modules/Ebd/Routes/student.routes"
-import { routerClassSession } from "./Modules/Ebd/Routes/classSession.routes"
-
-import uploadConfig from './config/multer'
-import { routerPerson } from "./Modules/People/People/Infra/Http/routes"
-import { routerLesson } from "./Modules/Ebd/Routes/lesson.routes"
-import { routerAcademic } from "./Modules/Ebd/Routes/academicYear.routes"
+import { personRoutes } from "./modules/people/person/presentation/routes/person.routes"
+import { memberRoutes } from "./modules/people/member/presentation/routes/member.routes"
+import { lessonRoutes } from "./modules/ebd/lesson/presentation/routes/lesson.routes"
+import { academicYearRoutes } from "./modules/ebd/academic-year/presentation/routes/academic-year.routes"
 
 const router = Router();
 
-const upload = multer(uploadConfig.upload("./tmp"));
-
-router.use('/api', routerUser)
-router.use ('/api', routerPerson)
-router.use ('/api', routerClass)
-router.use ('/api', routerTeacher)
-router.use ('/api', routerStudent)
-router.use('/api', routerClassSession)
-router.use('/api', routerLesson)
-router.use('/api', routerAcademic)
+router.use('/api', userRoutes)
+router.use ('/api', personRoutes)
+router.use ('/api', memberRoutes)
+router.use ('/api', classRoutes)
+router.use ('/api', teacherRoutes)
+router.use ('/api', studentRoutes)
+router.use('/api', classSessionRoutes)
+router.use('/api', lessonRoutes)
+router.use('/api', academicYearRoutes)
 
 
 export{ router}
