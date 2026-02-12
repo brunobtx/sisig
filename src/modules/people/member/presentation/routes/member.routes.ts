@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isAutenticated } from '../../../../../Common/Middleware/isAuthenticated';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
 import { CreateMemberUseCase } from '../../application/use-cases/create-member.use-case';
 import { PrismaMemberRepository } from '../../infra/repositories/prisma-member.repository';
 import { CreateMemberController } from '../controllers/create-member.controller';

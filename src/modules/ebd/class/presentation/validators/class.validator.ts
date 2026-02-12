@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateClassInputDto } from '../../application/dtos/create-class-input.dto';
 
 export class ClassRules {

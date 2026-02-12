@@ -6,7 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateClassSessionInputDto } from '../../application/dtos/create-class-session-input.dto';
 
 export class ClassSessionRules {

@@ -15,7 +15,8 @@
     "typescript": "^5.9.2"
   },
   "scripts": {
-    "dev": "ts-node-dev src/server.ts"
+    "dev": "ts-node-dev src/server.ts",
+    "scaffold:module": "node scripts/scaffold-module.js"
   },
   "dependencies": {
     "@types/node": "14.14.31",

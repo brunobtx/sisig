@@ -1,4 +1,4 @@
-import { Entity } from '../../../../../Common/Domain/Entities/entity';
+import { Entity } from '../../../../../shared/domain/entities/entity';
 
 export type UserProps = {
   databaseId?: number;

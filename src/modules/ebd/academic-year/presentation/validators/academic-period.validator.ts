@@ -5,7 +5,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateAcademicPeriodInputDto } from '../../application/dtos/create-academic-period-input.dto';
 
 export class AcademicPeriodRules {

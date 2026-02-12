@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber } from 'class-validator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateAcademicYearInputDto } from '../../application/dtos/create-academic-year-input.dto';
 
 export class AcademicYearRules {

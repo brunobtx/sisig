@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateUserInputDto } from '../../application/dtos/create-user-input.dto';
 
 export class UserRules {

@@ -6,8 +6,8 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { IsCPF } from '../../../../../Common/Helper/isCpfDecorator';
-import { ClassValidatorFields } from '../../../../../Common/Domain/Validators/classValidatorFields';
+import { IsCPF } from '../../../../../shared/utils/isCpfDecorator';
+import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { MemberInputDto } from '../../application/dtos/member-input.dto';
 
 export class MemberRules {

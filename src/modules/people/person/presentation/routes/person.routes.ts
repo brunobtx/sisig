@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isAutenticated } from '../../../../../Common/Middleware/isAuthenticated';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
 import { CreatePersonUseCase } from '../../application/use-cases/create-person.use-case';
 import { DeletePersonUseCase } from '../../application/use-cases/delete-person.use-case';
 import { DetailPersonUseCase } from '../../application/use-cases/detail-person.use-case';

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { isAutenticated } from '../../../../../Common/Middleware/isAuthenticated';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
 import { AuthUserUseCase } from '../../application/use-cases/auth-user.use-case';
 import { CreateUserUseCase } from '../../application/use-cases/create-user.use-case';
 import { DetailUserUseCase } from '../../application/use-cases/detail-user.use-case';

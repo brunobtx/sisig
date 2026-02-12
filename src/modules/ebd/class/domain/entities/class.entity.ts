@@ -1,4 +1,4 @@
-import { Entity } from '../../../../../Common/Domain/Entities/entity';
+import { Entity } from '../../../../../shared/domain/entities/entity';
 import { ClassAgeRange } from '../value-objects/class-age-range.value-object';
 
 export type ClassProps = {
