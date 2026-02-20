@@ -6,9 +6,15 @@ import 'dotenv/config';
 import { AppError } from './shared/errors/AppError';
 
 const app = express();
+const port = Number(process.env.APP_PORT ?? 3333);
+const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
 
 app.use(express.json())
-app.use(cors());
+app.use(
+  cors({
+    origin: corsOrigin,
+  }),
+);
 app.use(router);
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
@@ -25,4 +31,4 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(3333, () => console.log('Servidor Oline!'))
+app.listen(port, () => console.log(`Servidor online na porta ${port}!`))
