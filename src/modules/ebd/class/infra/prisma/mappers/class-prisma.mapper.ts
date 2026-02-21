@@ -10,6 +10,7 @@ export class ClassPrismaMapper {
         idade_in: data.idade_in,
         idade_fn: data.idade_fn,
         bo_situacao: data.bo_situacao,
+        description: data.description,
         created_at: data.created_at,
       },
       data.uuid,

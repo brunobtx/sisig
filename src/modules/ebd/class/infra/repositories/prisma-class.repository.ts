@@ -15,13 +15,15 @@ export class PrismaClassRepository implements ClassRepository {
 
   async create(data: ClassEntity): Promise<ClassEntity> {
     const classe = await prismaClient.class.create({
+      // Keep compatibility while local Prisma Client types are stale.
       data: {
         uuid: data.id,
         name: data.name,
         idade_in: data.idade_in,
         idade_fn: data.idade_fn,
         bo_situacao: data.bo_situacao ?? true,
-      },
+        description: data.description,
+      } as any,
     });
 
     return ClassPrismaMapper.toEntity(classe);

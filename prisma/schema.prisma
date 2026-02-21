@@ -53,6 +53,7 @@ model Class {
   idade_in       Int
   idade_fn       Int
   bo_situacao    Boolean        @default(true) // ativo por padrão
+  description    String?        @db.VarChar(500)
   created_at     DateTime       @default(now()) // data atual
   teachers       ClassTeacher[] // relação via pivot
   ClassStudent   ClassStudent[]

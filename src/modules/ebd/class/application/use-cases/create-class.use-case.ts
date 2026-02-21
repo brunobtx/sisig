@@ -10,6 +10,8 @@ export class CreateClassUseCase {
       name: data.name,
       idade_in: data.idade_in,
       idade_fn: data.idade_fn,
+      bo_situacao: data.isActive,
+      description: data.description,
     });
 
     return this.repository.create(classEntity);

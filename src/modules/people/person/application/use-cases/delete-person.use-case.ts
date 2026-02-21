@@ -18,6 +18,8 @@ export class DeletePersonUseCase {
       id: person.uuid ?? person.id,
       name: person.name,
       email: person.email,
+      phone: person.phone,
+      sexo: person.sexo,
       cpf: person.cpf,
       situacao: person.situacao,
     };

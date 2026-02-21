@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateClassInputDto } from '../../application/dtos/create-class-input.dto';
 
@@ -15,6 +15,15 @@ export class ClassRules {
   @IsNumber({}, { message: 'Idade final deve ser número' })
   @IsNotEmpty({ message: 'Idade Final é obrigatório!' })
   idade_fn: number;
+
+  @IsBoolean({ message: 'Situação deve ser verdadeiro ou falso' })
+  @IsNotEmpty({ message: 'Situação é obrigatório!' })
+  isActive: boolean;
+
+  @IsOptional()
+  @IsString({ message: 'Descrição deve ser texto' })
+  @MaxLength(500, { message: 'Descrição deve ter no máximo 500 caracteres' })
+  description?: string;
 
   constructor(data: CreateClassInputDto) {
     Object.assign(this, data);
