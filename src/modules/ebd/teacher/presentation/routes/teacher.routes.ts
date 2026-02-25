@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
+import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { CreateTeacherUseCase } from '../../application/use-cases/create-teacher.use-case';
 import { PrismaTeacherRepository } from '../../infra/repositories/prisma-teacher.repository';
 import { CreateTeacherController } from '../controllers/create-teacher.controller';
@@ -12,6 +14,8 @@ const createTeacherController = new CreateTeacherController(
   TeacherValidatorFactory.create(),
 );
 
-teacherRoutes.post('/teacher', createTeacherController.handle);
+teacherRoutes.use(isAutenticated);
+
+teacherRoutes.post('/teacher', requirePermission('school:create'), createTeacherController.handle);
 
 export { teacherRoutes };

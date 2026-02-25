@@ -16,7 +16,11 @@
   },
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
-    "scaffold:module": "node scripts/scaffold-module.js"
+    "scaffold:module": "node scripts/scaffold-module.js",
+    "prisma:seed": "prisma db seed"
+  },
+  "prisma": {
+    "seed": "ts-node --transpile-only prisma/seed.ts"
   },
   "dependencies": {
     "@types/node": "14.14.31",

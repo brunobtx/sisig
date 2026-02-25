@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
+import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { CreateClassSessionUseCase } from '../../application/use-cases/create-class-session.use-case';
 import { PrismaClassSessionRepository } from '../../infra/repositories/prisma-class-session.repository';
 import { CreateClassSessionController } from '../controllers/create-class-session.controller';
@@ -12,6 +14,8 @@ const createClassSessionController = new CreateClassSessionController(
   ClassSessionValidatorFactory.create(),
 );
 
-classSessionRoutes.post('/class-session', createClassSessionController.handle);
+classSessionRoutes.use(isAutenticated);
+
+classSessionRoutes.post('/class-session', requirePermission('school:create'), createClassSessionController.handle);
 
 export { classSessionRoutes };

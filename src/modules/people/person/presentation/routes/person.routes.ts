@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
+import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { CreatePersonUseCase } from '../../application/use-cases/create-person.use-case';
 import { DeletePersonUseCase } from '../../application/use-cases/delete-person.use-case';
 import { DetailPersonUseCase } from '../../application/use-cases/detail-person.use-case';
@@ -33,10 +34,10 @@ const deletePersonController = new DeletePersonController(new DeletePersonUseCas
 
 personRoutes.use(isAutenticated);
 
-personRoutes.post('/persons', createPersonController.handle);
-personRoutes.get('/persons', listPersonController.handle);
-personRoutes.get('/persons/:uuid', detailPersonController.handle);
-personRoutes.patch('/persons/:uuid', updatePersonController.handle);
-personRoutes.delete('/persons/:uuid', deletePersonController.handle);
+personRoutes.post('/persons', requirePermission('people:create'), createPersonController.handle);
+personRoutes.get('/persons', requirePermission('people:read'), listPersonController.handle);
+personRoutes.get('/persons/:uuid', requirePermission('people:read'), detailPersonController.handle);
+personRoutes.patch('/persons/:uuid', requirePermission('people:update'), updatePersonController.handle);
+personRoutes.delete('/persons/:uuid', requirePermission('people:delete'), deletePersonController.handle);
 
 export { personRoutes };

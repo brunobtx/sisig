@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
+import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { AddStudentToClassUseCase } from '../../application/use-cases/add-student-to-class.use-case';
 import { AddTeacherToClassUseCase } from '../../application/use-cases/add-teacher-to-class.use-case';
 import { CreateClassUseCase } from '../../application/use-cases/create-class.use-case';
@@ -24,8 +26,10 @@ const addStudentToClassController = new AddStudentToClassController(
   new AddStudentToClassUseCase(classRepository),
 );
 
-classRoutes.post('/class', createClassController.handle);
-classRoutes.post('/class/teacher', addTeacherToClassController.handle);
-classRoutes.post('/class/student', addStudentToClassController.handle);
+classRoutes.use(isAutenticated);
+
+classRoutes.post('/class', requirePermission('school:create'), createClassController.handle);
+classRoutes.post('/class/teacher', requirePermission('school:update'), addTeacherToClassController.handle);
+classRoutes.post('/class/student', requirePermission('school:update'), addStudentToClassController.handle);
 
 export { classRoutes };

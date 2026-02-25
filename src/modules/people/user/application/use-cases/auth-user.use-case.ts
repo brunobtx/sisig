@@ -1,6 +1,7 @@
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { AppError } from '../../../../../shared/errors/AppError';
+import { getPermissionsForUser, isValidRole } from '../../../../../shared/auth/rbac';
 import { PersonRepository } from '../../../person/domain/repositories/person.repository';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { AuthUserInputDto } from '../dtos/auth-user-input.dto';
@@ -39,10 +40,15 @@ export class AuthUserUseCase {
       throw new AppError('JWT_SECRET não configurado.', 500);
     }
 
+    const normalizedRole = isValidRole(user.role) ? user.role : 'viewer';
+    const permissions = getPermissionsForUser(normalizedRole, user.custom_permissions);
+
     const token = sign(
       {
         name: person.name,
         email: person.email,
+        role: normalizedRole,
+        permissions,
       },
       process.env.JWT_SECRET,
       {
@@ -55,6 +61,8 @@ export class AuthUserUseCase {
       id: user.uuid ?? user.id,
       name: person.name,
       email: person.email,
+      role: normalizedRole,
+      permissions,
       token,
     };
   }

@@ -25,23 +25,31 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   async create(user: UserEntity): Promise<UserEntity> {
+    const data: any = {
+      id_person: user.id_person,
+      password: user.password,
+      role: user.role,
+      custom_permissions: user.custom_permissions,
+    };
+
     const created = await prismaClient.user.create({
-      data: {
-        id_person: user.id_person,
-        password: user.password,
-      },
+      data,
     });
 
     return UserPrismaMapper.toEntity(created);
   }
 
   async update(user: UserEntity): Promise<UserEntity> {
+    const data: any = {
+      id_person: user.id_person,
+      password: user.password,
+      role: user.role,
+      custom_permissions: user.custom_permissions,
+    };
+
     const updated = await prismaClient.user.update({
       where: { uuid: user.uuid ?? user.id },
-      data: {
-        id_person: user.id_person,
-        password: user.password,
-      },
+      data,
     });
 
     return UserPrismaMapper.toEntity(updated);

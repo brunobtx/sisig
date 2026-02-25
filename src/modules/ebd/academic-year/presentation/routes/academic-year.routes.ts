@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthenticated';
+import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { CreateAcademicPeriodUseCase } from '../../application/use-cases/create-academic-period.use-case';
 import { CreateAcademicYearUseCase } from '../../application/use-cases/create-academic-year.use-case';
 import { PrismaAcademicYearRepository } from '../../infra/repositories/prisma-academic-year.repository';
@@ -21,7 +23,9 @@ const createAcademicPeriodController = new CreateAcademicPeriodController(
   AcademicPeriodValidatorFactory.create(),
 );
 
-academicYearRoutes.post('/academic-year', createAcademicYearController.handle);
-academicYearRoutes.post('/academic-period', createAcademicPeriodController.handle);
+academicYearRoutes.use(isAutenticated);
+
+academicYearRoutes.post('/academic-year', requirePermission('school:create'), createAcademicYearController.handle);
+academicYearRoutes.post('/academic-period', requirePermission('school:create'), createAcademicPeriodController.handle);
 
 export { academicYearRoutes };

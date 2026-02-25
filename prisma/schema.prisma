@@ -38,6 +38,8 @@ model User {
   id         Int       @id @default(autoincrement())
   uuid       String    @unique @default(uuid())
   password   String
+  role       String    @default("viewer")
+  custom_permissions String[] @default([])
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
   id_person  Int       @unique
