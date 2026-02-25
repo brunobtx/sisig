@@ -1,5 +1,5 @@
 import { compare } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+import { decode, sign, type JwtPayload, type SignOptions } from 'jsonwebtoken';
 import { AppError } from '../../../../../shared/errors/AppError';
 import { getPermissionsForUser, isValidRole } from '../../../../../shared/auth/rbac';
 import { PersonRepository } from '../../../person/domain/repositories/person.repository';
@@ -40,6 +40,7 @@ export class AuthUserUseCase {
       throw new AppError('JWT_SECRET não configurado.', 500);
     }
 
+    const jwtExpiresIn = (process.env.JWT_EXPIRES_IN || '1d') as SignOptions['expiresIn'];
     const normalizedRole = isValidRole(user.role) ? user.role : 'viewer';
     const permissions = getPermissionsForUser(normalizedRole, user.custom_permissions);
 
@@ -53,9 +54,17 @@ export class AuthUserUseCase {
       process.env.JWT_SECRET,
       {
         subject: String(user.uuid ?? user.id),
-        expiresIn: '30d',
+        expiresIn: jwtExpiresIn,
       },
     );
+
+    const payload = decode(token) as JwtPayload | null;
+    const issuedAt = payload?.iat;
+    const expiresAt = payload?.exp;
+    const expiresIn =
+      typeof issuedAt === 'number' && typeof expiresAt === 'number'
+        ? Math.max(expiresAt - issuedAt, 1)
+        : 60 * 60 * 24;
 
     return {
       id: user.uuid ?? user.id,
@@ -64,6 +73,7 @@ export class AuthUserUseCase {
       role: normalizedRole,
       permissions,
       token,
+      expiresIn,
     };
   }
 }

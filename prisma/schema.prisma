@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,42 +7,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// criar uma migration: yarn prisma migrate dev
 model Person {
-  id         Int       @id @default(autoincrement())
-  uuid       String    @unique @default(uuid())
-  name       String
-  cpf        String    @unique
-  phone      String
-  dt_nasc    DateTime
-  sexo       String
-  situacao   Boolean   @default(true)
-  email      String    @unique
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
-
-  user                User? // campo oposto da relação 1:1
-  Teacher             Teacher?
-  student             Student?
-  ClassSessionTeacher ClassSession[] @relation("TeacherClassSessions")
+  id                  Int            @id @default(autoincrement())
+  uuid                String         @unique @default(uuid())
+  name                String
+  cpf                 String         @unique
+  phone               String
+  dt_nasc             DateTime
+  sexo                String
+  situacao            Boolean        @default(true)
+  email               String         @unique
+  created_at          DateTime?      @default(now())
+  updated_at          DateTime?      @updatedAt
   ClassSessionPerson  ClassSession[] @relation("PersonClassSessions")
+  ClassSessionTeacher ClassSession[] @relation("TeacherClassSessions")
   Lesson              Lesson[]
+  student             Student?
+  Teacher             Teacher?
+  user                User?
 
   @@map("person")
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  uuid       String    @unique @default(uuid())
-  password   String
-  role       String    @default("viewer")
-  custom_permissions String[] @default([])
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
-  id_person  Int       @unique
-  person     Person    @relation(fields: [id_person], references: [id])
+  id                 Int       @id @default(autoincrement())
+  uuid               String    @unique @default(uuid())
+  password           String
+  created_at         DateTime? @default(now())
+  updated_at         DateTime? @updatedAt
+  id_person          Int       @unique
+  custom_permissions String[]  @default([])
+  role               String    @default("viewer")
+  person             Person    @relation(fields: [id_person], references: [id])
+  password_reset_tokens PasswordResetToken[]
 
   @@map("user")
+}
+
+model PasswordResetToken {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @default(uuid())
+  id_user    Int
+  token_hash String    @unique
+  expires_at DateTime
+  used_at    DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  user User @relation(fields: [id_user], references: [id])
+
+  @@index([id_user])
+  @@index([expires_at])
+  @@map("password_reset_token")
 }
 
 model Class {
@@ -54,15 +67,15 @@ model Class {
   name           String
   idade_in       Int
   idade_fn       Int
-  bo_situacao    Boolean        @default(true) // ativo por padrão
-  description    String?        @db.VarChar(500)
-  created_at     DateTime       @default(now()) // data atual
-  teachers       ClassTeacher[] // relação via pivot
-  ClassStudent   ClassStudent[]
-  ClassSession   ClassSession[]
-  Lesson         Lesson[]
-  AcademicYear   AcademicYear?  @relation(fields: [academicYearId], references: [id])
+  bo_situacao    Boolean        @default(true)
+  created_at     DateTime       @default(now())
   academicYearId Int?
+  description    String?        @db.VarChar(500)
+  AcademicYear   AcademicYear?  @relation(fields: [academicYearId], references: [id])
+  ClassSession   ClassSession[]
+  ClassStudent   ClassStudent[]
+  teachers       ClassTeacher[]
+  Lesson         Lesson[]
 
   @@map("class")
 }
@@ -71,48 +84,45 @@ model Teacher {
   id          Int            @id @default(autoincrement())
   uuid        String         @unique @default(uuid())
   id_person   Int            @unique
-  bo_situacao Boolean        @default(true) // ativo por padrão
-  created_at  DateTime       @default(now()) // data atual
-  person      Person         @relation(fields: [id_person], references: [id])
+  bo_situacao Boolean        @default(true)
+  created_at  DateTime       @default(now())
   classes     ClassTeacher[]
+  person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("teacher")
 }
 
 model ClassTeacher {
-  id         Int    @id @default(autoincrement())
-  uuid       String @unique @default(uuid())
+  id         Int     @id @default(autoincrement())
+  uuid       String  @unique @default(uuid())
   id_teacher Int
   id_class   Int
+  class      Class   @relation(fields: [id_class], references: [id])
+  teacher    Teacher @relation(fields: [id_teacher], references: [id])
 
-  teacher Teacher @relation(fields: [id_teacher], references: [id])
-  class   Class   @relation(fields: [id_class], references: [id])
-
-  @@unique([id_teacher, id_class]) // evita duplicados
+  @@unique([id_teacher, id_class])
   @@map("class_teacher")
 }
 
 model Student {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @default(uuid())
-  id_person   Int       @unique
-  created_at  DateTime? @default(now())
-  bo_situacao Boolean   @default(true)
-
-  person  Person         @relation(fields: [id_person], references: [id])
-  classes ClassStudent[]
+  id          Int            @id @default(autoincrement())
+  uuid        String         @unique @default(uuid())
+  id_person   Int            @unique
+  created_at  DateTime?      @default(now())
+  bo_situacao Boolean        @default(true)
+  classes     ClassStudent[]
+  person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("student")
 }
 
 model ClassStudent {
-  id         Int    @id @default(autoincrement())
-  uuid       String @unique @default(uuid())
+  id         Int     @id @default(autoincrement())
+  uuid       String  @unique @default(uuid())
   id_student Int
   id_class   Int
-
-  student Student @relation(fields: [id_student], references: [id])
-  class   Class   @relation(fields: [id_class], references: [id])
+  class      Class   @relation(fields: [id_class], references: [id])
+  student    Student @relation(fields: [id_student], references: [id])
 
   @@unique([id_student, id_class])
   @@map("class_student")
@@ -128,66 +138,58 @@ model ClassSession {
   id_teacher Int
   notes      String?  @db.VarChar(500)
   id_person  Int
-
-  class   Class  @relation(fields: [id_class], references: [id])
-  teacher Person @relation("TeacherClassSessions", fields: [id_teacher], references: [id])
-  person  Person @relation("PersonClassSessions", fields: [id_person], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  class      Class    @relation(fields: [id_class], references: [id])
+  person     Person   @relation("PersonClassSessions", fields: [id_person], references: [id])
+  teacher    Person   @relation("TeacherClassSessions", fields: [id_teacher], references: [id])
 
   @@map("class_session")
 }
 
 model Lesson {
-  id               Int      @id @default(autoincrement())
-  uuid             String   @unique @default(uuid())
+  id               Int            @id @default(autoincrement())
+  uuid             String         @unique @default(uuid())
   id_class         Int
   dt_lesson        DateTime
   nr_lesson        Int
-  title            String   @db.VarChar(255)
-  description      String?  @db.VarChar(500)
+  title            String         @db.VarChar(255)
+  description      String?        @db.VarChar(500)
   id_period        Int
   id_person_create Int
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-
-  // Relacionamentos
-  class   Class          @relation(fields: [id_class], references: [id])
-  period  AcademicPeriod @relation(fields: [id_period], references: [id])
-  creator Person         @relation(fields: [id_person_create], references: [id])
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  class            Class          @relation(fields: [id_class], references: [id])
+  period           AcademicPeriod @relation(fields: [id_period], references: [id])
+  creator          Person         @relation(fields: [id_person_create], references: [id])
 
   @@map("lesson")
 }
 
-// Ano letivo
 model AcademicYear {
-  id               Int      @id @default(autoincrement())
-  uuid             String   @unique @default(uuid())
-  year             Int // ex: 2025
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id               Int              @id @default(autoincrement())
+  uuid             String           @unique @default(uuid())
+  year             Int
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
   id_person_create Int
-
-  periods AcademicPeriod[]
-  classes Class[]
+  periods          AcademicPeriod[]
+  classes          Class[]
 
   @@map("academic_year")
 }
 
-// Período (trimestre, semestre, bimestre)
 model AcademicPeriod {
-  id               Int      @id @default(autoincrement())
-  name             String // ex: "1º Trimestre"
+  id               Int          @id @default(autoincrement())
+  name             String
   dt_start         DateTime
   dt_end           DateTime
   id_academy_year  Int
   id_person_create Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  academicYear AcademicYear @relation(fields: [id_academy_year], references: [id])
-  lessons      Lesson[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  academicYear     AcademicYear @relation(fields: [id_academy_year], references: [id])
+  lessons          Lesson[]
 
   @@map("academic_period")
 }

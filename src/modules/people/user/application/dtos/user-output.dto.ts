@@ -34,6 +34,7 @@ export type AuthUserOutputDto = {
     actions: string[];
   }>;
   token: string;
+  expiresIn: number;
 };
 
 export class UserOutputMapper {
