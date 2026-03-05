@@ -1,18 +1,22 @@
 import { hash } from 'bcryptjs';
 import { AppError } from '../../../../../shared/errors/AppError';
 import { isValidRole, UserRole } from '../../../../../shared/auth/rbac';
+import { AccessControlRepository } from '../../../../settings/access-control/domain/repositories/access-control.repository';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { CreateUserInputDto } from '../dtos/create-user-input.dto';
 
 export class CreateUserUseCase {
-  constructor(private readonly repository: UserRepository) {}
+  constructor(
+    private readonly repository: UserRepository,
+    private readonly accessControlRepository: AccessControlRepository,
+  ) {}
 
   async execute({
     id_person,
     password,
     role = 'viewer',
-    custom_permissions = [],
+    groupUuids = [],
   }: CreateUserInputDto): Promise<UserEntity> {
     if (!password) {
       throw new AppError('Senha obrigatória!', 400);
@@ -33,10 +37,29 @@ export class CreateUserUseCase {
       id_person,
       password: passwordHash,
       role: role as UserRole,
-      custom_permissions,
       created_at: new Date(),
     });
 
-    return this.repository.create(userEntity);
+    const createdUser = await this.repository.create(userEntity);
+
+    try {
+      const normalizedGroupUuids = Array.from(new Set((groupUuids ?? []).filter(Boolean)));
+
+      if (normalizedGroupUuids.length) {
+        if (!createdUser.uuid) {
+          throw new AppError('Usuário criado sem UUID válido para vincular grupos.', 500);
+        }
+
+        await this.accessControlRepository.replaceUserGroups(createdUser.uuid, normalizedGroupUuids);
+      }
+
+      return createdUser;
+    } catch (error) {
+      if (createdUser.databaseId) {
+        await this.repository.delete(createdUser.databaseId);
+      }
+
+      throw error;
+    }
   }
 }

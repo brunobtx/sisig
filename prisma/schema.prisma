@@ -36,12 +36,89 @@ model User {
   created_at         DateTime? @default(now())
   updated_at         DateTime? @updatedAt
   id_person          Int       @unique
-  custom_permissions String[]  @default([])
   role               String    @default("viewer")
   person             Person    @relation(fields: [id_person], references: [id])
+  permissionGroups   UserPermissionGroup[]
   password_reset_tokens PasswordResetToken[]
 
   @@map("user")
+}
+
+model Service {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  code        String    @unique
+  name        String
+  created_at  DateTime  @default(now())
+  features    Feature[]
+  permissions Permission[]
+
+  @@map("service")
+}
+
+model Feature {
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @default(uuid())
+  service_id  Int
+  code        String
+  name        String
+  created_at  DateTime  @default(now())
+  service     Service   @relation(fields: [service_id], references: [id])
+  permissions Permission[]
+
+  @@unique([service_id, code])
+  @@map("feature")
+}
+
+model Permission {
+  id                   Int                          @id @default(autoincrement())
+  uuid                 String                       @unique @default(uuid())
+  key                  String                       @unique
+  service_id           Int
+  feature_id           Int
+  created_at           DateTime                     @default(now())
+  service              Service                      @relation(fields: [service_id], references: [id])
+  feature              Feature                      @relation(fields: [feature_id], references: [id])
+  groupPermissions     PermissionGroupPermission[]
+
+  @@unique([service_id, feature_id])
+  @@map("permission")
+}
+
+model PermissionGroup {
+  id               Int                          @id @default(autoincrement())
+  uuid             String                       @unique @default(uuid())
+  name             String                       @unique
+  description      String?
+  is_active        Boolean                      @default(true)
+  created_at       DateTime                     @default(now())
+  updated_at       DateTime                     @updatedAt
+  permissions      PermissionGroupPermission[]
+  userAssignments  UserPermissionGroup[]
+
+  @@map("permission_group")
+}
+
+model PermissionGroupPermission {
+  id                   Int              @id @default(autoincrement())
+  permission_group_id  Int
+  permission_id        Int
+  permissionGroup      PermissionGroup  @relation(fields: [permission_group_id], references: [id])
+  permission           Permission       @relation(fields: [permission_id], references: [id])
+
+  @@unique([permission_group_id, permission_id])
+  @@map("permission_group_permission")
+}
+
+model UserPermissionGroup {
+  id                   Int              @id @default(autoincrement())
+  user_id              Int
+  permission_group_id  Int
+  user                 User             @relation(fields: [user_id], references: [id])
+  permissionGroup      PermissionGroup  @relation(fields: [permission_group_id], references: [id])
+
+  @@unique([user_id, permission_group_id])
+  @@map("user_permission_group")
 }
 
 model PasswordResetToken {

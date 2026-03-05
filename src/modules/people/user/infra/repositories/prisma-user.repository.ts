@@ -29,7 +29,6 @@ export class PrismaUserRepository implements UserRepository {
       id_person: user.id_person,
       password: user.password,
       role: user.role,
-      custom_permissions: user.custom_permissions,
     };
 
     const created = await prismaClient.user.create({
@@ -44,7 +43,6 @@ export class PrismaUserRepository implements UserRepository {
       id_person: user.id_person,
       password: user.password,
       role: user.role,
-      custom_permissions: user.custom_permissions,
     };
 
     const updated = await prismaClient.user.update({

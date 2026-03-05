@@ -6,7 +6,6 @@ export type UserProps = {
   id_person: number;
   password: string;
   role?: string;
-  custom_permissions?: string[];
   created_at?: Date | null;
 };
 
@@ -15,7 +14,6 @@ export class UserEntity extends Entity<UserProps> {
     super(props, id);
     this.props.created_at = this.props.created_at ?? new Date();
     this.props.role = this.props.role ?? 'viewer';
-    this.props.custom_permissions = this.props.custom_permissions ?? [];
   }
 
   get databaseId() {
@@ -36,10 +34,6 @@ export class UserEntity extends Entity<UserProps> {
 
   get role() {
     return this.props.role;
-  }
-
-  get custom_permissions() {
-    return this.props.custom_permissions ?? [];
   }
 
   get created_at() {

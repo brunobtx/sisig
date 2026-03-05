@@ -1,0 +1,2 @@
+-- RenameIndex
+ALTER INDEX "permission_group_permission_permission_group_id_permission_i_ke" RENAME TO "permission_group_permission_permission_group_id_permission__key";

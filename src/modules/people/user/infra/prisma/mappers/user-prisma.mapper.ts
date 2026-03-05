@@ -9,7 +9,6 @@ export class UserPrismaMapper {
         id_person: user.id_person,
         password: user.password,
         role: user.role,
-        custom_permissions: user.custom_permissions,
         created_at: user.created_at,
       },
       user.uuid,

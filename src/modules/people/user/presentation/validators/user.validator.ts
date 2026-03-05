@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ClassValidatorFields } from '../../../../../shared/domain/validators/classValidatorFields';
 import { CreateUserInputDto } from '../../application/dtos/create-user-input.dto';
 import { isValidRole } from '../../../../../shared/auth/rbac';
@@ -18,7 +18,10 @@ export class UserRules {
   @IsString({ message: 'Role inválido.' })
   role?: string;
 
-  custom_permissions?: string[];
+  @IsOptional()
+  @IsArray({ message: 'groupUuids deve ser uma lista.' })
+  @IsString({ each: true, message: 'Cada groupUuid deve ser um texto.' })
+  groupUuids?: string[];
 
   constructor(data: CreateUserInputDto) {
     Object.assign(this, data);
@@ -33,11 +36,6 @@ export class UserValidator extends ClassValidatorFields<UserRules> {
 
     if (data.role && !isValidRole(data.role)) {
       this.errors = { ...this.errors, role: ['Role inválido.'] };
-      return false;
-    }
-
-    if (data.custom_permissions && !Array.isArray(data.custom_permissions)) {
-      this.errors = { ...this.errors, custom_permissions: ['Permissões devem ser uma lista.'] };
       return false;
     }
 

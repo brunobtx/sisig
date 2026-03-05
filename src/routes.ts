@@ -10,6 +10,7 @@ import { personRoutes } from "./modules/people/person/presentation/routes/person
 import { memberRoutes } from "./modules/people/member/presentation/routes/member.routes"
 import { lessonRoutes } from "./modules/ebd/lesson/presentation/routes/lesson.routes"
 import { academicYearRoutes } from "./modules/ebd/academic-year/presentation/routes/academic-year.routes"
+import { accessControlRoutes } from "./modules/settings/access-control/presentation/routes/access-control.routes"
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use ('/api', studentRoutes)
 router.use('/api', classSessionRoutes)
 router.use('/api', lessonRoutes)
 router.use('/api', academicYearRoutes)
+router.use('/api', accessControlRoutes)
 
 
 export{ router}

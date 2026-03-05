@@ -1,63 +1,17 @@
 export type UserRole = 'admin' | 'manager' | 'editor' | 'viewer';
-export type PermissionAction = 'create' | 'read' | 'update' | 'delete' | 'export';
-export type PermissionModule =
-  | 'people'
-  | 'users'
-  | 'members'
-  | 'events'
-  | 'school'
-  | 'finance'
-  | 'settings';
-
-export type PermissionKey = `${PermissionModule}:${PermissionAction}`;
+export type PermissionAction = string;
+export type PermissionModule = string;
+export type PermissionKey = `${string}:${string}`;
 
 export type Permission = {
   module: PermissionModule;
   actions: PermissionAction[];
 };
 
-const ALL_ACTIONS: PermissionAction[] = ['create', 'read', 'update', 'delete', 'export'];
-const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
-  admin: [
-    { module: 'people', actions: ALL_ACTIONS },
-    { module: 'users', actions: ALL_ACTIONS },
-    { module: 'members', actions: ALL_ACTIONS },
-    { module: 'events', actions: ALL_ACTIONS },
-    { module: 'school', actions: ALL_ACTIONS },
-    { module: 'finance', actions: ALL_ACTIONS },
-    { module: 'settings', actions: ALL_ACTIONS },
-  ],
-  manager: [
-    { module: 'people', actions: ALL_ACTIONS },
-    { module: 'users', actions: ['read'] },
-    { module: 'members', actions: ALL_ACTIONS },
-    { module: 'events', actions: ALL_ACTIONS },
-    { module: 'school', actions: ALL_ACTIONS },
-    { module: 'finance', actions: ['read', 'export'] },
-    { module: 'settings', actions: ['read'] },
-  ],
-  editor: [
-    { module: 'people', actions: ['read', 'update'] },
-    { module: 'users', actions: ['read'] },
-    { module: 'members', actions: ['read', 'update'] },
-    { module: 'events', actions: ['create', 'read', 'update'] },
-    { module: 'school', actions: ['create', 'read', 'update'] },
-    { module: 'finance', actions: ['read'] },
-    { module: 'settings', actions: [] },
-  ],
-  viewer: [
-    { module: 'people', actions: ['read'] },
-    { module: 'users', actions: [] },
-    { module: 'members', actions: ['read'] },
-    { module: 'events', actions: ['read'] },
-    { module: 'school', actions: ['read'] },
-    { module: 'finance', actions: ['read'] },
-    { module: 'settings', actions: [] },
-  ],
-};
+const VALID_ROLES: UserRole[] = ['admin', 'manager', 'editor', 'viewer'];
 
 export function isValidRole(role: string): role is UserRole {
-  return role in ROLE_PERMISSIONS;
+  return VALID_ROLES.includes(role as UserRole);
 }
 
 function normalizePermissionSet(permissions: Permission[]): Set<PermissionKey> {
@@ -65,18 +19,34 @@ function normalizePermissionSet(permissions: Permission[]): Set<PermissionKey> {
 
   for (const permission of permissions) {
     for (const action of permission.actions) {
-      keys.add(`${permission.module}:${action}` as PermissionKey);
+      keys.add(`${permission.module}:${action}`);
     }
   }
 
   return keys;
 }
 
-function toPermissionList(keys: Set<PermissionKey>): Permission[] {
+function normalizePermissionKey(rawKey: string): PermissionKey | null {
+  const [module, action, ...rest] = rawKey.split(':');
+
+  if (!module || !action || rest.length > 0) {
+    return null;
+  }
+
+  return `${module}:${action}`;
+}
+
+export function permissionKeysToList(permissionKeys: string[]): Permission[] {
   const moduleMap = new Map<PermissionModule, Set<PermissionAction>>();
 
-  for (const key of keys) {
-    const [module, action] = key.split(':') as [PermissionModule, PermissionAction];
+  for (const key of permissionKeys) {
+    const normalizedKey = normalizePermissionKey(key);
+
+    if (!normalizedKey) {
+      continue;
+    }
+
+    const [module, action] = normalizedKey.split(':') as [PermissionModule, PermissionAction];
 
     if (!moduleMap.has(module)) {
       moduleMap.set(module, new Set<PermissionAction>());
@@ -91,43 +61,23 @@ function toPermissionList(keys: Set<PermissionKey>): Permission[] {
   }));
 }
 
-function sanitizeCustomPermissions(customPermissions?: string[]): PermissionKey[] {
-  if (!customPermissions) return [];
-
-  return customPermissions.filter((item) => {
-    const [module, action] = item.split(':');
-
-    if (!module || !action) return false;
-
-    const moduleIsValid = [
-      'people',
-      'users',
-      'members',
-      'events',
-      'school',
-      'finance',
-      'settings',
-    ].includes(module);
-    const actionIsValid = ['create', 'read', 'update', 'delete', 'export'].includes(action);
-
-    return moduleIsValid && actionIsValid;
-  }) as PermissionKey[];
+export function permissionListToKeys(permissions: Permission[]): PermissionKey[] {
+  return Array.from(normalizePermissionSet(permissions));
 }
 
-export function getPermissionsForUser(role: UserRole, customPermissions?: string[]): Permission[] {
-  const base = normalizePermissionSet(ROLE_PERMISSIONS[role]);
-  const extras = sanitizeCustomPermissions(customPermissions);
-
-  for (const permission of extras) {
-    base.add(permission);
-  }
-
-  return toPermissionList(base);
+export function getPermissionsFromKeys(permissionKeys: string[]): Permission[] {
+  return permissionKeysToList(permissionKeys);
 }
 
 export function hasPermission(permissions: Permission[], required: PermissionKey): boolean {
+  const requiredKey = normalizePermissionKey(required);
+
+  if (!requiredKey) {
+    return false;
+  }
+
   for (const permission of permissions) {
-    if (permission.actions.some((action) => `${permission.module}:${action}` === required)) {
+    if (permission.actions.some((action) => `${permission.module}:${action}` === requiredKey)) {
       return true;
     }
   }

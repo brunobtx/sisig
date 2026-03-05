@@ -1,7 +1,8 @@
 import { compare } from 'bcryptjs';
 import { decode, sign, type JwtPayload, type SignOptions } from 'jsonwebtoken';
 import { AppError } from '../../../../../shared/errors/AppError';
-import { getPermissionsForUser, isValidRole } from '../../../../../shared/auth/rbac';
+import { getPermissionsFromKeys, isValidRole } from '../../../../../shared/auth/rbac';
+import { AccessControlRepository } from '../../../../settings/access-control/domain/repositories/access-control.repository';
 import { PersonRepository } from '../../../person/domain/repositories/person.repository';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { AuthUserInputDto } from '../dtos/auth-user-input.dto';
@@ -11,6 +12,7 @@ export class AuthUserUseCase {
   constructor(
     private readonly personRepository: PersonRepository,
     private readonly userRepository: UserRepository,
+    private readonly accessControlRepository: AccessControlRepository,
   ) {}
 
   async execute({ email, password }: AuthUserInputDto): Promise<AuthUserOutputDto> {
@@ -42,7 +44,13 @@ export class AuthUserUseCase {
 
     const jwtExpiresIn = (process.env.JWT_EXPIRES_IN || '1d') as SignOptions['expiresIn'];
     const normalizedRole = isValidRole(user.role) ? user.role : 'viewer';
-    const permissions = getPermissionsForUser(normalizedRole, user.custom_permissions);
+    if (!user.databaseId) {
+      throw new AppError('Usuario invalido para autenticacao.', 400);
+    }
+    const groupPermissionKeys = await this.accessControlRepository.listPermissionKeysByUserDatabaseId(
+      user.databaseId,
+    );
+    const permissions = getPermissionsFromKeys(groupPermissionKeys);
 
     const token = sign(
       {
