@@ -256,6 +256,23 @@ model AcademicYear {
   @@map("academic_year")
 }
 
+model Organization {
+  id            Int             @id @default(autoincrement())
+  uuid          String          @unique @default(uuid())
+  name          String
+  type          String
+  id_parent     Int?
+  bo_situacao   Boolean         @default(true)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  parent        Organization?   @relation("OrganizationHierarchy", fields: [id_parent], references: [id])
+  children      Organization[]  @relation("OrganizationHierarchy")
+
+  @@unique([name, id_parent])
+  @@index([id_parent])
+  @@map("organization")
+}
+
 model AcademicPeriod {
   id               Int          @id @default(autoincrement())
   name             String

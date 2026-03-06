@@ -4,7 +4,7 @@ import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 const ALL_ACTIONS = ['create', 'read', 'update', 'delete', 'export'] as const;
-const ADMIN_PERMISSION_MODULES = ['people', 'users', 'members', 'events', 'school', 'finance', 'settings'] as const;
+const ADMIN_PERMISSION_MODULES = ['people', 'users', 'members', 'events', 'school', 'finance', 'settings', 'organization'] as const;
 
 async function syncSerialSequence(tableName: string): Promise<void> {
   await prisma.$executeRawUnsafe(`
@@ -20,6 +20,7 @@ async function syncAllSeedSequences(): Promise<void> {
   const tables = [
     'person',
     'user',
+    'organization',
     'service',
     'feature',
     'permission',

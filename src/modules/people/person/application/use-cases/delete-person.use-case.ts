@@ -15,13 +15,15 @@ export class DeletePersonUseCase {
     await this.repository.inactivateByUUID(uuid);
 
     return {
-      id: person.uuid ?? person.id,
+      uuid: person.uuid,
+      id: person.id,
       name: person.name,
       email: person.email,
       phone: person.phone,
       sexo: person.sexo,
       cpf: person.cpf,
       situacao: person.situacao,
+      dt_nasc: person.dt_nasc,
     };
   }
 }
