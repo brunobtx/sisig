@@ -17,6 +17,7 @@ model Person {
   sexo                String
   situacao            Boolean        @default(true)
   email               String         @unique
+  id_organization     Int?
   created_at          DateTime?      @default(now())
   updated_at          DateTime?      @updatedAt
   ClassSessionPerson  ClassSession[] @relation("PersonClassSessions")
@@ -25,7 +26,9 @@ model Person {
   student             Student?
   Teacher             Teacher?
   user                User?
+  organization        Organization?  @relation(fields: [id_organization], references: [id])
 
+  @@index([id_organization])
   @@map("person")
 }
 
@@ -267,6 +270,7 @@ model Organization {
   updated_at    DateTime        @updatedAt
   parent        Organization?   @relation("OrganizationHierarchy", fields: [id_parent], references: [id])
   children      Organization[]  @relation("OrganizationHierarchy")
+  people        Person[]
 
   @@unique([name, id_parent])
   @@index([id_parent])

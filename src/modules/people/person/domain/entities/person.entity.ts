@@ -10,6 +10,7 @@ export type PersonProps = {
   dt_nasc: Date;
   sexo: string;
   situacao: boolean;
+  id_organization?: number | null;
   createdAt?: Date | null;
 };
 
@@ -53,6 +54,10 @@ export class PersonEntity extends Entity<PersonProps> {
 
   get situacao() {
     return this.props.situacao;
+  }
+
+  get id_organization() {
+    return this.props.id_organization;
   }
 
   get createdAt() {

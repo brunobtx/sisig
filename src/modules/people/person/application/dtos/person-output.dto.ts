@@ -3,6 +3,7 @@ import { PersonEntity } from '../../domain/entities/person.entity';
 export type PersonOutputDto = {
   uuid: string;
   id: number | string;
+  id_organization?: number | null;
   name: string;
   email: string;
   phone: string;
@@ -17,6 +18,7 @@ export class PersonOutputMapper {
     return {
       uuid: entity.uuid,
       id: entity.databaseId ?? entity.id,
+      id_organization: entity.id_organization ?? null,
       name: entity.name,
       email: entity.email,
       phone: entity.phone,

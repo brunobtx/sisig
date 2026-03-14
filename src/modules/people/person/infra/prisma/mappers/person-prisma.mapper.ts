@@ -13,6 +13,7 @@ export class PersonPrismaMapper {
         dt_nasc: person.dt_nasc,
         sexo: person.sexo,
         situacao: person.situacao,
+        id_organization: person.id_organization,
         createdAt: person.created_at,
       },
       person.uuid,

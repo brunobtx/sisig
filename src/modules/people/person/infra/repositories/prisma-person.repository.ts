@@ -40,6 +40,7 @@ export class PrismaPersonRepository implements PersonRepository {
         dt_nasc: person.dt_nasc,
         sexo: person.sexo,
         situacao: person.situacao,
+        id_organization: person.id_organization,
         created_at: person.createdAt ?? new Date(),
       },
     });
@@ -58,6 +59,7 @@ export class PrismaPersonRepository implements PersonRepository {
         dt_nasc: person.dt_nasc,
         sexo: person.sexo,
         situacao: person.situacao,
+        id_organization: person.id_organization,
       },
     });
 
