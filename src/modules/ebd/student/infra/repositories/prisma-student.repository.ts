@@ -14,6 +14,17 @@ export class PrismaStudentRepository implements StudentRepository {
     return student ? StudentPrismaMapper.toEntity(student) : null;
   }
 
+  async findAllWithPerson() {
+    return prismaClient.student.findMany({
+      include: {
+        person: {
+          select: { id: true, name: true, email: true, cpf: true },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
   async create(student: StudentEntity): Promise<StudentEntity> {
     const newStudent = await prismaClient.student.create({
       data: {

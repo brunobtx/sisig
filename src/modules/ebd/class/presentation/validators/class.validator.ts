@@ -21,6 +21,10 @@ export class ClassRules {
   isActive: boolean;
 
   @IsOptional()
+  @IsNumber({}, { message: 'Ano letivo deve ser um número válido' })
+  academicYearId?: number | null;
+
+  @IsOptional()
   @IsString({ message: 'Descrição deve ser texto' })
   @MaxLength(500, { message: 'Descrição deve ter no máximo 500 caracteres' })
   description?: string;

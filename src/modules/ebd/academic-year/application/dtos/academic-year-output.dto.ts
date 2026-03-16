@@ -2,9 +2,12 @@ import { AcademicPeriodEntity } from '../../domain/entities/academic-period.enti
 import { AcademicYearEntity } from '../../domain/entities/academic-year.entity';
 
 export type AcademicYearOutputDto = {
+  id: number | string;
+  uuid: string;
   year: number;
   id_person_create: number;
   createdAt: Date;
+  updatedAt?: Date | null;
 };
 
 export type AcademicPeriodOutputDto = {
@@ -17,9 +20,12 @@ export type AcademicPeriodOutputDto = {
 export class AcademicYearOutputMapper {
   static toAcademicYearOutput(entity: AcademicYearEntity): AcademicYearOutputDto {
     return {
+      id: entity.databaseId ?? entity.id,
+      uuid: entity.uuid ?? entity.id,
       year: entity.year,
       id_person_create: entity.id_person_create,
       createdAt: entity.createdAt as Date,
+      updatedAt: entity.updatedAt ?? null,
     };
   }
 

@@ -14,6 +14,17 @@ export class PrismaTeacherRepository implements TeacherRepository {
     return teacher ? TeacherPrismaMapper.toEntity(teacher) : null;
   }
 
+  async findAllWithPerson() {
+    return prismaClient.teacher.findMany({
+      include: {
+        person: {
+          select: { id: true, name: true, email: true, cpf: true },
+        },
+      },
+      orderBy: { created_at: 'desc' },
+    });
+  }
+
   async create(teacher: TeacherEntity): Promise<TeacherEntity> {
     const newTeacher = await prismaClient.teacher.create({
       data: {

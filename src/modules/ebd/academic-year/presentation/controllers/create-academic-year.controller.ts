@@ -3,14 +3,23 @@ import { AppError } from '../../../../../shared/errors/AppError';
 import { AcademicYearOutputMapper } from '../../application/dtos/academic-year-output.dto';
 import { CreateAcademicYearUseCase } from '../../application/use-cases/create-academic-year.use-case';
 import { AcademicYearValidator } from '../validators/academic-year.validator';
+import { UserRepository } from '../../../../people/user/domain/repositories/user.repository';
 
 export class CreateAcademicYearController {
   constructor(
     private readonly useCase: CreateAcademicYearUseCase,
     private readonly validator: AcademicYearValidator,
+    private readonly userRepository?: UserRepository,
   ) {}
 
   handle = async (req: Request, res: Response): Promise<Response> => {
+    if (!req.body?.id_person_create && this.userRepository && req.userId) {
+      const user = await this.userRepository.findByUuid(req.userId);
+      if (user) {
+        req.body.id_person_create = user.id_person;
+      }
+    }
+
     const isValid = this.validator.validate(req.body);
     if (!isValid) {
       return res.status(400).json({ errors: this.validator.errors });

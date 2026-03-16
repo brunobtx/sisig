@@ -44,6 +44,7 @@ export type StudentClassRelation = {
 
 export interface ClassRepository {
   findById(id: number): Promise<ClassEntity | null>;
+  findAll(academicYearId?: number): Promise<ClassEntity[]>;
   create(data: ClassEntity): Promise<ClassEntity>;
   teacherExists(id: number): Promise<boolean>;
   studentExists(id: number): Promise<boolean>;
@@ -51,4 +52,6 @@ export interface ClassRepository {
   findStudentClassLink(id_student: number): Promise<{ id_class: number } | null>;
   createTeacherLink(id_teacher: number, id_class: number): Promise<TeacherClassRelation>;
   createStudentLink(id_student: number, id_class: number): Promise<StudentClassRelation>;
+  listTeachersByClass(id_class: number): Promise<TeacherClassRelation[]>;
+  listStudentsByClass(id_class: number): Promise<StudentClassRelation[]>;
 }

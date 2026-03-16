@@ -16,6 +16,14 @@ export class PrismaAcademicYearRepository implements AcademicYearRepository {
     return AcademicYearPrismaMapper.toAcademicYearEntity(academicYear);
   }
 
+  async findAll(): Promise<AcademicYearEntity[]> {
+    const years = await prismaClient.academicYear.findMany({
+      orderBy: { year: 'desc' },
+    });
+
+    return years.map((year) => AcademicYearPrismaMapper.toAcademicYearEntity(year));
+  }
+
   async academicYearExists(id: number): Promise<boolean> {
     const year = await prismaClient.academicYear.findUnique({ where: { id } });
     return !!year;
