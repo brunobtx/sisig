@@ -22,6 +22,10 @@ export class ClassSessionRules {
   @IsNotEmpty({ message: 'O número da lição é obrigatório.' })
   nr_lesson: number;
 
+  @IsNumber({}, { message: 'O trimestre deve ser um número válido.' })
+  @IsNotEmpty({ message: 'O trimestre é obrigatório.' })
+  trimester: number;
+
   @IsString({ message: 'O tópico deve ser um texto válido.' })
   @MaxLength(255, { message: 'O tópico deve ter no máximo 255 caracteres.' })
   @IsNotEmpty({ message: 'O tópico é obrigatório.' })

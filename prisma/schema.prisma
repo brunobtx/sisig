@@ -21,7 +21,6 @@ model Person {
   created_at          DateTime?      @default(now())
   updated_at          DateTime?      @updatedAt
   ClassSessionPerson  ClassSession[] @relation("PersonClassSessions")
-  ClassSessionTeacher ClassSession[] @relation("TeacherClassSessions")
   Lesson              Lesson[]
   student             Student?
   Teacher             Teacher?
@@ -162,6 +161,7 @@ model Teacher {
   bo_situacao Boolean        @default(true)
   created_at  DateTime       @default(now())
   turmas      TurmaTeacher[]
+  classSessions ClassSession[]
   person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("teacher")
@@ -186,6 +186,7 @@ model Student {
   created_at  DateTime?      @default(now())
   bo_situacao Boolean        @default(true)
   turmas      TurmaStudent[]
+  attendances ClassSessionAttendance[]
   person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("student")
@@ -227,6 +228,7 @@ model ClassSession {
   id_turma   Int
   dt_session DateTime
   nr_lesson  Int
+  trimester  Int
   topic      String   @db.VarChar(255)
   id_teacher Int
   notes      String?  @db.VarChar(500)
@@ -235,9 +237,29 @@ model ClassSession {
   updatedAt  DateTime @updatedAt
   turma      Turma    @relation(fields: [id_turma], references: [id])
   person     Person   @relation("PersonClassSessions", fields: [id_person], references: [id])
-  teacher    Person   @relation("TeacherClassSessions", fields: [id_teacher], references: [id])
+  teacher    Teacher  @relation(fields: [id_teacher], references: [id])
+  attendances ClassSessionAttendance[]
 
+  @@unique([id_turma, nr_lesson])
   @@map("class_session")
+}
+
+model ClassSessionAttendance {
+  id               Int          @id @default(autoincrement())
+  uuid             String       @unique @default(uuid())
+  id_class_session Int
+  id_student       Int
+  is_present       Boolean
+  notes            String?      @db.VarChar(500)
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+  classSession     ClassSession @relation(fields: [id_class_session], references: [id])
+  student          Student      @relation(fields: [id_student], references: [id])
+
+  @@unique([id_class_session, id_student])
+  @@index([id_class_session])
+  @@index([id_student])
+  @@map("class_session_attendance")
 }
 
 model Lesson {

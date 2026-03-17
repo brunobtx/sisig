@@ -6,6 +6,7 @@ import { turmaRoutes } from "./modules/ebd/turma/presentation/routes/turma.route
 import { teacherRoutes } from "./modules/ebd/teacher/presentation/routes/teacher.routes"
 import { studentRoutes } from "./modules/ebd/student/presentation/routes/student.routes"
 import { classSessionRoutes } from "./modules/ebd/class-session/presentation/routes/class-session.routes"
+import { reportRoutes } from "./modules/ebd/report/presentation/routes/report.routes"
 
 import { personRoutes } from "./modules/people/person/presentation/routes/person.routes"
 import { memberRoutes } from "./modules/people/member/presentation/routes/member.routes"
@@ -24,6 +25,7 @@ router.use ('/api', turmaRoutes)
 router.use ('/api', teacherRoutes)
 router.use ('/api', studentRoutes)
 router.use('/api', classSessionRoutes)
+router.use('/api', reportRoutes)
 router.use('/api', lessonRoutes)
 router.use('/api', academicYearRoutes)
 router.use('/api', accessControlRoutes)

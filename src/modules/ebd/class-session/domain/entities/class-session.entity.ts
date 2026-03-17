@@ -6,6 +6,7 @@ export type ClassSessionProps = {
   id_turma: number;
   dt_session: Date;
   nr_lesson: number;
+  trimester: number;
   topic: string;
   id_teacher: number;
   notes?: string;
@@ -38,6 +39,10 @@ export class ClassSessionEntity extends Entity<ClassSessionProps> {
 
   get nr_lesson() {
     return this.props.nr_lesson;
+  }
+
+  get trimester() {
+    return this.props.trimester;
   }
 
   get topic() {

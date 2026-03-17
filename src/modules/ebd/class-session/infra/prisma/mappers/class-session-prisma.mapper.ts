@@ -9,6 +9,7 @@ export class ClassSessionPrismaMapper {
         id_turma: data.id_turma,
         dt_session: data.dt_session,
         nr_lesson: data.nr_lesson,
+        trimester: data.trimester,
         topic: data.topic,
         id_teacher: data.id_teacher,
         notes: data.notes,
