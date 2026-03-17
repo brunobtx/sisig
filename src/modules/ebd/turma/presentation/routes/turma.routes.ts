@@ -7,6 +7,8 @@ import { CreateTurmaUseCase } from '../../application/use-cases/create-turma.use
 import { ListTurmaStudentsUseCase } from '../../application/use-cases/list-turma-students.use-case';
 import { ListTurmaTeachersUseCase } from '../../application/use-cases/list-turma-teachers.use-case';
 import { ListTurmaUseCase } from '../../application/use-cases/list-turma.use-case';
+import { PrismaStudentRepository } from '../../../student/infra/repositories/prisma-student.repository';
+import { PrismaTeacherRepository } from '../../../teacher/infra/repositories/prisma-teacher.repository';
 import { PrismaTurmaRepository } from '../../infra/repositories/prisma-turma.repository';
 import { AddStudentToTurmaController } from '../controllers/add-student-to-turma.controller';
 import { AddTeacherToTurmaController } from '../controllers/add-teacher-to-turma.controller';
@@ -18,6 +20,8 @@ import { TurmaValidatorFactory } from '../validators/turma.validator';
 
 const turmaRoutes = Router();
 const turmaRepository = new PrismaTurmaRepository();
+const teacherRepository = new PrismaTeacherRepository();
+const studentRepository = new PrismaStudentRepository();
 
 const createTurmaController = new CreateTurmaController(
   new CreateTurmaUseCase(turmaRepository),
@@ -25,11 +29,11 @@ const createTurmaController = new CreateTurmaController(
 );
 
 const addTeacherToTurmaController = new AddTeacherToTurmaController(
-  new AddTeacherToTurmaUseCase(turmaRepository),
+  new AddTeacherToTurmaUseCase(turmaRepository, teacherRepository),
 );
 
 const addStudentToTurmaController = new AddStudentToTurmaController(
-  new AddStudentToTurmaUseCase(turmaRepository),
+  new AddStudentToTurmaUseCase(turmaRepository, studentRepository),
 );
 
 const listTurmaController = new ListTurmaController(new ListTurmaUseCase(turmaRepository));

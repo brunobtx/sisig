@@ -1,4 +1,4 @@
 export type AddStudentToTurmaInputDto = {
-  id_student: number;
+  id_person: number;
   id_turma: number;
 };

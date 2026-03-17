@@ -1,31 +1,45 @@
 import { AppError } from '../../../../../shared/errors/AppError';
+import { StudentEntity } from '../../../student/domain/entities/student.entity';
+import { StudentRepository } from '../../../student/domain/repositories/student.repository';
 import { StudentTurmaRelation, TurmaRepository } from '../../domain/repositories/turma.repository';
 import { AddStudentToTurmaInputDto } from '../dtos/add-student-to-turma-input.dto';
 
 export class AddStudentToTurmaUseCase {
-  constructor(private readonly repository: TurmaRepository) {}
+  constructor(
+    private readonly turmaRepository: TurmaRepository,
+    private readonly studentRepository: StudentRepository,
+  ) {}
 
-  async execute({ id_student, id_turma }: AddStudentToTurmaInputDto): Promise<StudentTurmaRelation> {
-    if (!id_student) {
-      throw new AppError('É obrigatório selecionar um aluno', 400);
+  async execute({ id_person, id_turma }: AddStudentToTurmaInputDto): Promise<StudentTurmaRelation> {
+    if (!id_person) {
+      throw new AppError('É obrigatório selecionar uma pessoa', 400);
     }
 
     if (!id_turma) {
       throw new AppError('É obrigatório selecionar uma turma', 400);
     }
 
-    const turma = await this.repository.findById(id_turma);
+    const turma = await this.turmaRepository.findById(id_turma);
     if (!turma) {
       throw new AppError('Turma não encontrada', 404);
     }
 
-    const studentExists = await this.repository.studentExists(id_student);
-    if (!studentExists) {
-      throw new AppError('Aluno não encontrado', 404);
+    const personExists = await this.studentRepository.personExists(id_person);
+    if (!personExists) {
+      throw new AppError('Pessoa não encontrada', 404);
     }
 
-    const studentLink = await this.repository.findStudentTurmaLinkByYear(
-      id_student,
+    let student = await this.studentRepository.findByIdPerson(id_person);
+    if (!student) {
+      student = await this.studentRepository.create(new StudentEntity({ id_person }));
+    }
+
+    if (!student.databaseId) {
+      throw new AppError('Aluno inválido para matrícula na turma', 400);
+    }
+
+    const studentLink = await this.turmaRepository.findStudentTurmaLinkByYear(
+      student.databaseId,
       turma.id_academic_year,
     );
     if (studentLink && studentLink.id_turma === id_turma) {
@@ -36,6 +50,6 @@ export class AddStudentToTurmaUseCase {
       throw new AppError('Esse aluno já está vinculado a uma turma nesse ano letivo', 400);
     }
 
-    return this.repository.createStudentLink(id_student, id_turma);
+    return this.turmaRepository.createStudentLink(student.databaseId, id_turma);
   }
 }
