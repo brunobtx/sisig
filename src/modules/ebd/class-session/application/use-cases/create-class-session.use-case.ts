@@ -7,11 +7,11 @@ export class CreateClassSessionUseCase {
   constructor(private readonly repository: ClassSessionRepository) {}
 
   async execute(data: CreateClassSessionInputDto): Promise<ClassSessionEntity> {
-    const { id_class, dt_session, nr_lesson, topic, id_teacher, notes, id_person } = data;
+    const { id_turma, dt_session, nr_lesson, topic, id_teacher, notes, id_person } = data;
 
-    const classExists = await this.repository.classExists(id_class);
-    if (!classExists) {
-      throw new AppError('Classe não encontrada', 404);
+    const turmaExists = await this.repository.turmaExists(id_turma);
+    if (!turmaExists) {
+      throw new AppError('Turma não encontrada', 404);
     }
 
     const teacherExists = await this.repository.teacherExists(id_teacher);
@@ -25,7 +25,7 @@ export class CreateClassSessionUseCase {
     }
 
     const classSession = new ClassSessionEntity({
-      id_class,
+      id_turma,
       dt_session: new Date(dt_session),
       nr_lesson,
       topic,

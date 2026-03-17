@@ -5,13 +5,7 @@ export class ListClassController {
   constructor(private readonly useCase: ListClassUseCase) {}
 
   handle = async (req: Request, res: Response): Promise<Response> => {
-    const academicYearId = req.query.academicYearId
-      ? Number(req.query.academicYearId)
-      : undefined;
-
-    const classes = await this.useCase.execute(
-      Number.isNaN(academicYearId) ? undefined : academicYearId,
-    );
+    const classes = await this.useCase.execute();
     return res.status(200).json(classes);
   };
 }

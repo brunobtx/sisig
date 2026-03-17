@@ -4,9 +4,9 @@ import { ClassSessionRepository } from '../../domain/repositories/class-session.
 import { ClassSessionPrismaMapper } from '../prisma/mappers/class-session-prisma.mapper';
 
 export class PrismaClassSessionRepository implements ClassSessionRepository {
-  async classExists(id_class: number): Promise<boolean> {
-    const classe = await prismaClient.class.findUnique({ where: { id: id_class } });
-    return !!classe;
+  async turmaExists(id_turma: number): Promise<boolean> {
+    const turma = await prismaClient.turma.findUnique({ where: { id: id_turma } });
+    return !!turma;
   }
 
   async teacherExists(id_teacher: number): Promise<boolean> {
@@ -22,7 +22,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
   async create(data: ClassSessionEntity): Promise<ClassSessionEntity> {
     const classSession = await prismaClient.classSession.create({
       data: {
-        id_class: data.id_class,
+        id_turma: data.id_turma,
         dt_session: data.dt_session,
         nr_lesson: data.nr_lesson,
         topic: data.topic,

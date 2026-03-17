@@ -3,7 +3,7 @@ import { Entity } from '../../../../../shared/domain/entities/entity';
 export type ClassSessionProps = {
   databaseId?: number;
   uuid?: string;
-  id_class: number;
+  id_turma: number;
   dt_session: Date;
   nr_lesson: number;
   topic: string;
@@ -28,8 +28,8 @@ export class ClassSessionEntity extends Entity<ClassSessionProps> {
     return this.props.uuid;
   }
 
-  get id_class() {
-    return this.props.id_class;
+  get id_turma() {
+    return this.props.id_turma;
   }
 
   get dt_session() {

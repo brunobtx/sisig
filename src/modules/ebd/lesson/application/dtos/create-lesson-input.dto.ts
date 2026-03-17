@@ -1,5 +1,5 @@
 export type CreateLessonInputDto = {
-  id_class: number;
+  id_turma: number;
   dt_lesson: Date | string;
   nr_lesson: number;
   title: string;

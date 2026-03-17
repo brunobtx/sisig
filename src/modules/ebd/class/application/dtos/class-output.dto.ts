@@ -7,7 +7,6 @@ export type ClassOutputDto = {
   idade_in: number;
   idade_fn: number;
   isActive: boolean;
-  academicYearId?: number | null;
   description?: string | null;
 };
 
@@ -20,7 +19,6 @@ export class ClassOutputMapper {
       idade_in: entity.idade_in,
       idade_fn: entity.idade_fn,
       isActive: entity.bo_situacao ?? true,
-      academicYearId: entity.academicYearId ?? null,
       description: entity.description ?? null,
     };
   }

@@ -12,7 +12,7 @@ import { CreateClassSessionInputDto } from '../../application/dtos/create-class-
 export class ClassSessionRules {
   @IsNumber({}, { message: "O campo 'Turma' deve ser um número válido." })
   @IsNotEmpty({ message: "O campo 'Turma' é obrigatório." })
-  id_class: number;
+  id_turma: number;
 
   @IsDateString({}, { message: 'A data da sessão deve ser uma data válida.' })
   @IsNotEmpty({ message: 'A data da sessão é obrigatória.' })

@@ -1,5 +1,5 @@
 export type CreateClassSessionInputDto = {
-  id_class: number;
+  id_turma: number;
   dt_session: Date | string;
   nr_lesson: number;
   topic: string;

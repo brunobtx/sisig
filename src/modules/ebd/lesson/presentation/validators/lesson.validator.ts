@@ -12,7 +12,7 @@ import { CreateLessonInputDto } from '../../application/dtos/create-lesson-input
 export class LessonRules {
   @IsNumber({}, { message: "O campo 'Turma' deve ser um número válido." })
   @IsNotEmpty({ message: "O campo 'Turma' é obrigatório." })
-  id_class: number;
+  id_turma: number;
 
   @IsDateString({}, { message: 'A data da lição deve ser uma data válida.' })
   @IsNotEmpty({ message: 'A data da lição é obrigatória.' })

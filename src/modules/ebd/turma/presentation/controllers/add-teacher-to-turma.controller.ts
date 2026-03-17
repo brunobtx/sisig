@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { AppError } from '../../../../../shared/errors/AppError';
-import { AddStudentToClassUseCase } from '../../application/use-cases/add-student-to-class.use-case';
+import { AddTeacherToTurmaUseCase } from '../../application/use-cases/add-teacher-to-turma.use-case';
 
-export class AddStudentToClassController {
-  constructor(private readonly useCase: AddStudentToClassUseCase) {}
+export class AddTeacherToTurmaController {
+  constructor(private readonly useCase: AddTeacherToTurmaUseCase) {}
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {

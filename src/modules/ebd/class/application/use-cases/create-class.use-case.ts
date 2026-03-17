@@ -10,7 +10,6 @@ export class CreateClassUseCase {
       name: data.name,
       idade_in: data.idade_in,
       idade_fn: data.idade_fn,
-      academicYearId: data.academicYearId ?? null,
       bo_situacao: data.isActive,
       description: data.description,
     });

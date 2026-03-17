@@ -1,15 +1,14 @@
 import { Request, Response } from 'express';
 import { AppError } from '../../../../../shared/errors/AppError';
-import { ListClassStudentsUseCase } from '../../application/use-cases/list-class-students.use-case';
+import { AddStudentToTurmaUseCase } from '../../application/use-cases/add-student-to-turma.use-case';
 
-export class ListClassStudentsController {
-  constructor(private readonly useCase: ListClassStudentsUseCase) {}
+export class AddStudentToTurmaController {
+  constructor(private readonly useCase: AddStudentToTurmaUseCase) {}
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const id_class = Number(req.params.id);
-      const relations = await this.useCase.execute(id_class);
-      return res.status(200).json(relations);
+      const relation = await this.useCase.execute(req.body);
+      return res.status(200).json(relation);
     } catch (error: any) {
       if (error instanceof AppError) {
         return res.status(error.statusCode).json({ message: error.message });

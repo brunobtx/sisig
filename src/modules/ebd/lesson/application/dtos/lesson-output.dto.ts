@@ -1,7 +1,7 @@
 import { LessonEntity } from '../../domain/entities/lesson.entity';
 
 export type LessonOutputDto = {
-  id_class: number;
+  id_turma: number;
   dt_lesson: Date;
   nr_lesson: number;
 };
@@ -9,7 +9,7 @@ export type LessonOutputDto = {
 export class LessonOutputMapper {
   static toOutput(entity: LessonEntity): LessonOutputDto {
     return {
-      id_class: entity.id_class,
+      id_turma: entity.id_turma,
       dt_lesson: entity.dt_lesson,
       nr_lesson: entity.nr_lesson,
     };

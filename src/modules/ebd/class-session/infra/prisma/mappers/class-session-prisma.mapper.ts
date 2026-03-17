@@ -6,7 +6,7 @@ export class ClassSessionPrismaMapper {
       {
         databaseId: data.id,
         uuid: data.uuid,
-        id_class: data.id_class,
+        id_turma: data.id_turma,
         dt_session: data.dt_session,
         nr_lesson: data.nr_lesson,
         topic: data.topic,

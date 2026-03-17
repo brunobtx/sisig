@@ -2,6 +2,7 @@ import { Router } from "express"
 
 import { userRoutes } from "./modules/people/user/presentation/routes/user.routes"
 import { classRoutes } from "./modules/ebd/class/presentation/routes/class.routes"
+import { turmaRoutes } from "./modules/ebd/turma/presentation/routes/turma.routes"
 import { teacherRoutes } from "./modules/ebd/teacher/presentation/routes/teacher.routes"
 import { studentRoutes } from "./modules/ebd/student/presentation/routes/student.routes"
 import { classSessionRoutes } from "./modules/ebd/class-session/presentation/routes/class-session.routes"
@@ -19,6 +20,7 @@ router.use('/api', userRoutes)
 router.use ('/api', personRoutes)
 router.use ('/api', memberRoutes)
 router.use ('/api', classRoutes)
+router.use ('/api', turmaRoutes)
 router.use ('/api', teacherRoutes)
 router.use ('/api', studentRoutes)
 router.use('/api', classSessionRoutes)

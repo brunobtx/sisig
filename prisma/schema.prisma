@@ -149,13 +149,8 @@ model Class {
   idade_fn       Int
   bo_situacao    Boolean        @default(true)
   created_at     DateTime       @default(now())
-  academicYearId Int?
   description    String?        @db.VarChar(500)
-  AcademicYear   AcademicYear?  @relation(fields: [academicYearId], references: [id])
-  ClassSession   ClassSession[]
-  ClassStudent   ClassStudent[]
-  teachers       ClassTeacher[]
-  Lesson         Lesson[]
+  turmas         Turma[]
 
   @@map("class")
 }
@@ -166,22 +161,22 @@ model Teacher {
   id_person   Int            @unique
   bo_situacao Boolean        @default(true)
   created_at  DateTime       @default(now())
-  classes     ClassTeacher[]
+  turmas      TurmaTeacher[]
   person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("teacher")
 }
 
-model ClassTeacher {
+model TurmaTeacher {
   id         Int     @id @default(autoincrement())
   uuid       String  @unique @default(uuid())
   id_teacher Int
-  id_class   Int
-  class      Class   @relation(fields: [id_class], references: [id])
+  id_turma   Int
+  turma      Turma   @relation(fields: [id_turma], references: [id])
   teacher    Teacher @relation(fields: [id_teacher], references: [id])
 
-  @@unique([id_teacher, id_class])
-  @@map("class_teacher")
+  @@unique([id_teacher, id_turma])
+  @@map("turma_teacher")
 }
 
 model Student {
@@ -190,28 +185,46 @@ model Student {
   id_person   Int            @unique
   created_at  DateTime?      @default(now())
   bo_situacao Boolean        @default(true)
-  classes     ClassStudent[]
+  turmas      TurmaStudent[]
   person      Person         @relation(fields: [id_person], references: [id])
 
   @@map("student")
 }
 
-model ClassStudent {
+model TurmaStudent {
   id         Int     @id @default(autoincrement())
   uuid       String  @unique @default(uuid())
   id_student Int
-  id_class   Int
-  class      Class   @relation(fields: [id_class], references: [id])
+  id_turma   Int
+  turma      Turma   @relation(fields: [id_turma], references: [id])
   student    Student @relation(fields: [id_student], references: [id])
 
-  @@unique([id_student, id_class])
-  @@map("class_student")
+  @@unique([id_student, id_turma])
+  @@map("turma_student")
+}
+
+model Turma {
+  id               Int            @id @default(autoincrement())
+  uuid             String         @unique @default(uuid())
+  id_class         Int
+  id_academic_year Int
+  bo_situacao      Boolean        @default(true)
+  created_at       DateTime       @default(now())
+  class            Class          @relation(fields: [id_class], references: [id])
+  academicYear     AcademicYear   @relation(fields: [id_academic_year], references: [id])
+  teachers         TurmaTeacher[]
+  students         TurmaStudent[]
+  classSessions    ClassSession[]
+  lessons          Lesson[]
+
+  @@unique([id_class, id_academic_year])
+  @@map("turma")
 }
 
 model ClassSession {
   id         Int      @id @default(autoincrement())
   uuid       String   @unique @default(uuid())
-  id_class   Int
+  id_turma   Int
   dt_session DateTime
   nr_lesson  Int
   topic      String   @db.VarChar(255)
@@ -220,7 +233,7 @@ model ClassSession {
   id_person  Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  class      Class    @relation(fields: [id_class], references: [id])
+  turma      Turma    @relation(fields: [id_turma], references: [id])
   person     Person   @relation("PersonClassSessions", fields: [id_person], references: [id])
   teacher    Person   @relation("TeacherClassSessions", fields: [id_teacher], references: [id])
 
@@ -230,7 +243,7 @@ model ClassSession {
 model Lesson {
   id               Int            @id @default(autoincrement())
   uuid             String         @unique @default(uuid())
-  id_class         Int
+  id_turma         Int
   dt_lesson        DateTime
   nr_lesson        Int
   title            String         @db.VarChar(255)
@@ -239,7 +252,7 @@ model Lesson {
   id_person_create Int
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
-  class            Class          @relation(fields: [id_class], references: [id])
+  turma            Turma          @relation(fields: [id_turma], references: [id])
   period           AcademicPeriod @relation(fields: [id_period], references: [id])
   creator          Person         @relation(fields: [id_person_create], references: [id])
 
@@ -254,7 +267,7 @@ model AcademicYear {
   updatedAt        DateTime         @updatedAt
   id_person_create Int
   periods          AcademicPeriod[]
-  classes          Class[]
+  turmas           Turma[]
 
   @@map("academic_year")
 }

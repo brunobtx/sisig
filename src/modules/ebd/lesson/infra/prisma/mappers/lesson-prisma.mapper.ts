@@ -6,7 +6,7 @@ export class LessonPrismaMapper {
       {
         databaseId: data.id,
         uuid: data.uuid,
-        id_class: data.id_class,
+        id_turma: data.id_turma,
         dt_lesson: data.dt_lesson,
         nr_lesson: data.nr_lesson,
         title: data.title,

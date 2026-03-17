@@ -7,7 +7,6 @@ export type ClassProps = {
   name: string;
   idade_in: number;
   idade_fn: number;
-  academicYearId?: number | null;
   bo_situacao?: boolean;
   description?: string | null;
   created_at?: Date | null;
@@ -39,10 +38,6 @@ export class ClassEntity extends Entity<ClassProps> {
 
   get idade_fn() {
     return this.props.idade_fn;
-  }
-
-  get academicYearId() {
-    return this.props.academicYearId ?? null;
   }
 
   get bo_situacao() {
