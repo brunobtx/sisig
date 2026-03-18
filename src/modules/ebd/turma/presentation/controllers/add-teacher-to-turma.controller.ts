@@ -7,7 +7,7 @@ export class AddTeacherToTurmaController {
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {
-      const relation = await this.useCase.execute(req.body);
+      const relation = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(200).json(relation);
     } catch (error: any) {
       if (error instanceof AppError) {

@@ -9,8 +9,8 @@ export class ListUserAccessControlsUseCase {
     private readonly accessControlRepository: AccessControlRepository,
   ) {}
 
-  async execute(userUuid: string): Promise<UserAccessControlsOutputDto> {
-    const user = await this.userRepository.findByUuid(userUuid);
+  async execute(userUuid: string, id_organization?: number | null): Promise<UserAccessControlsOutputDto> {
+    const user = await this.userRepository.findByUuid(userUuid, id_organization);
 
     if (!user || !user.databaseId) {
       throw new AppError('Usuario nao encontrado.', 404);

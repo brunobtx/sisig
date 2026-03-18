@@ -12,12 +12,13 @@ export class SaveClassSessionAttendanceUseCase {
   async execute(
     id_class_session: number,
     data: SaveClassSessionAttendanceInputDto,
+    id_organization?: number | null,
   ): Promise<{ session: ClassSessionWithTeacher; students: ClassSessionAttendanceStudent[] }> {
     if (!id_class_session) {
       throw new AppError('É obrigatório informar a aula', 400);
     }
 
-    const session = await this.repository.findDetailedById(id_class_session);
+    const session = await this.repository.findDetailedById(id_class_session, id_organization);
     if (!session) {
       throw new AppError('Aula não encontrada', 404);
     }
@@ -50,7 +51,10 @@ export class SaveClassSessionAttendanceUseCase {
       throw new AppError('A chamada não pode conter o mesmo aluno repetido', 400);
     }
 
-    const turmaStudents = await this.repository.listAttendanceByClassSession(id_class_session);
+    const turmaStudents = await this.repository.listAttendanceByClassSession(
+      id_class_session,
+      id_organization,
+    );
     const validStudentIds = new Set(turmaStudents.map((student) => student.id_student));
 
     for (const item of items) {
@@ -66,9 +70,10 @@ export class SaveClassSessionAttendanceUseCase {
         is_present: item.is_present,
         notes: item.notes?.trim() || undefined,
       })),
+      id_organization,
     );
 
-    const updatedSession = await this.repository.findDetailedById(id_class_session);
+    const updatedSession = await this.repository.findDetailedById(id_class_session, id_organization);
     if (!updatedSession) {
       throw new AppError('Aula não encontrada', 404);
     }

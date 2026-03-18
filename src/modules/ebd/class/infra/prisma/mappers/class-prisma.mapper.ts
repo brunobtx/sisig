@@ -9,6 +9,7 @@ export class ClassPrismaMapper {
         name: data.name,
         idade_in: data.idade_in,
         idade_fn: data.idade_fn,
+        id_organization: data.id_organization,
         bo_situacao: data.bo_situacao,
         description: data.description,
         created_at: data.created_at,

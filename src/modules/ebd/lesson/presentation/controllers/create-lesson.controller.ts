@@ -17,7 +17,7 @@ export class CreateLessonController {
     }
 
     try {
-      const lesson = await this.useCase.execute(req.body);
+      const lesson = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(LessonOutputMapper.toOutput(lesson));
     } catch (error: any) {
       if (error instanceof AppError) {

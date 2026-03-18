@@ -4,13 +4,19 @@ import { ClassRepository } from '../../domain/repositories/class.repository';
 import { ClassPrismaMapper } from '../prisma/mappers/class-prisma.mapper';
 
 export class PrismaClassRepository implements ClassRepository {
-  async findById(id: number): Promise<ClassEntity | null> {
-    const classe = await prismaClient.class.findUnique({ where: { id } });
+  async findById(id: number, id_organization?: number | null): Promise<ClassEntity | null> {
+    const classe = await prismaClient.class.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return classe ? ClassPrismaMapper.toEntity(classe) : null;
   }
 
-  async findAll(): Promise<ClassEntity[]> {
+  async findAll(id_organization?: number | null): Promise<ClassEntity[]> {
     const classes = await prismaClient.class.findMany({
+      where: typeof id_organization === 'number' ? { id_organization } : undefined,
       orderBy: { created_at: 'desc' },
     });
 
@@ -25,6 +31,7 @@ export class PrismaClassRepository implements ClassRepository {
         name: data.name,
         idade_in: data.idade_in,
         idade_fn: data.idade_fn,
+        id_organization: data.id_organization ?? null,
         bo_situacao: data.bo_situacao ?? true,
         description: data.description,
       } as any,

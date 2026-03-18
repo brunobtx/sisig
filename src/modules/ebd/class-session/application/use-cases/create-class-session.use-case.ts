@@ -6,15 +6,18 @@ import { CreateClassSessionInputDto } from '../dtos/create-class-session-input.d
 export class CreateClassSessionUseCase {
   constructor(private readonly repository: ClassSessionRepository) {}
 
-  async execute(data: CreateClassSessionInputDto): Promise<ClassSessionEntity> {
+  async execute(
+    data: CreateClassSessionInputDto,
+    id_organization?: number | null,
+  ): Promise<ClassSessionEntity> {
     const { id_turma, dt_session, nr_lesson, trimester, topic, id_teacher, notes, id_person } = data;
 
-    const turmaExists = await this.repository.turmaExists(id_turma);
+    const turmaExists = await this.repository.turmaExists(id_turma, id_organization);
     if (!turmaExists) {
       throw new AppError('Turma não encontrada', 404);
     }
 
-    const teacherExists = await this.repository.teacherExists(id_teacher);
+    const teacherExists = await this.repository.teacherExists(id_teacher, id_organization);
     if (!teacherExists) {
       throw new AppError('Professor não encontrado', 404);
     }
@@ -24,7 +27,7 @@ export class CreateClassSessionUseCase {
       throw new AppError('O professor informado não está vinculado a essa turma', 400);
     }
 
-    const personExists = await this.repository.personExists(id_person);
+    const personExists = await this.repository.personExists(id_person, id_organization);
     if (!personExists) {
       throw new AppError('Pessoa não encontrada', 404);
     }

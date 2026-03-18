@@ -4,18 +4,42 @@ import { TeacherRepository } from '../../domain/repositories/teacher.repository'
 import { TeacherPrismaMapper } from '../prisma/mappers/teacher-prisma.mapper';
 
 export class PrismaTeacherRepository implements TeacherRepository {
-  async personExists(id_person: number): Promise<boolean> {
-    const person = await prismaClient.person.findUnique({ where: { id: id_person } });
+  async personExists(id_person: number, id_organization?: number | null): Promise<boolean> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        id: id_person,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!person;
   }
 
-  async findByIdPerson(id_person: number): Promise<TeacherEntity | null> {
-    const teacher = await prismaClient.teacher.findFirst({ where: { id_person } });
+  async findByIdPerson(id_person: number, id_organization?: number | null): Promise<TeacherEntity | null> {
+    const teacher = await prismaClient.teacher.findFirst({
+      where: {
+        id_person,
+        ...(typeof id_organization === 'number'
+          ? {
+              person: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
+    });
     return teacher ? TeacherPrismaMapper.toEntity(teacher) : null;
   }
 
-  async findAllWithPerson() {
+  async findAllWithPerson(id_organization?: number | null) {
     return prismaClient.teacher.findMany({
+      where:
+        typeof id_organization === 'number'
+          ? {
+              person: {
+                id_organization,
+              },
+            }
+          : undefined,
       include: {
         person: {
           select: { id: true, name: true, email: true, cpf: true },

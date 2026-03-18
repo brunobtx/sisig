@@ -4,18 +4,39 @@ import { LessonRepository } from '../../domain/repositories/lesson.repository';
 import { LessonPrismaMapper } from '../prisma/mappers/lesson-prisma.mapper';
 
 export class PrismaLessonRepository implements LessonRepository {
-  async turmaExists(id_turma: number): Promise<boolean> {
-    const turma = await prismaClient.turma.findUnique({ where: { id: id_turma } });
+  async turmaExists(id_turma: number, id_organization?: number | null): Promise<boolean> {
+    const turma = await prismaClient.turma.findFirst({
+      where: {
+        id: id_turma,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!turma;
   }
 
-  async periodExists(id_period: number): Promise<boolean> {
-    const period = await prismaClient.academicPeriod.findUnique({ where: { id: id_period } });
+  async periodExists(id_period: number, id_organization?: number | null): Promise<boolean> {
+    const period = await prismaClient.academicPeriod.findFirst({
+      where: {
+        id: id_period,
+        ...(typeof id_organization === 'number'
+          ? {
+              academicYear: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
+    });
     return !!period;
   }
 
-  async personExists(id_person: number): Promise<boolean> {
-    const person = await prismaClient.person.findUnique({ where: { id: id_person } });
+  async personExists(id_person: number, id_organization?: number | null): Promise<boolean> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        id: id_person,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!person;
   }
 

@@ -9,7 +9,7 @@ export class DetailUserController {
     const userId = req.params.uuid;
 
     try {
-      const user = await this.useCase.execute(userId);
+      const user = await this.useCase.execute(userId, req.activeOrganizationId);
       return res.status(200).json(user);
     } catch (error: any) {
       if (error instanceof AppError) {

@@ -21,7 +21,7 @@ export class UpdateUserAccessControlsController {
     try {
       await this.useCase.execute(userUuid, {
         groupUuids: Array.isArray(req.body?.groupUuids) ? req.body.groupUuids : [],
-      });
+      }, req.activeOrganizationId);
 
       return res.status(204).send();
     } catch (error: any) {

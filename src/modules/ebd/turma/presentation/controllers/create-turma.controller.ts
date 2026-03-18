@@ -17,7 +17,7 @@ export class CreateTurmaController {
     }
 
     try {
-      const turma = await this.useCase.execute(req.body);
+      const turma = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(TurmaOutputMapper.toOutput(turma));
     } catch (error: any) {
       if (error instanceof AppError) {

@@ -14,7 +14,7 @@ export class CreateClassSessionController {
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     if (!req.body?.id_person && this.userRepository && req.userId) {
-      const user = await this.userRepository.findByUuid(req.userId);
+      const user = await this.userRepository.findByUuid(req.userId, req.activeOrganizationId);
       if (user) {
         req.body.id_person = user.id_person;
       }
@@ -26,7 +26,7 @@ export class CreateClassSessionController {
     }
 
     try {
-      const session = await this.useCase.execute(req.body);
+      const session = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(ClassSessionOutputMapper.toOutput(session));
     } catch (error: any) {
       if (error instanceof AppError) {

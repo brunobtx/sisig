@@ -18,7 +18,7 @@ export class CreateUserController {
     }
 
     try {
-      const user = await this.useCase.execute(req.body);
+      const user = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(UserOutputMapper.toCreateOutput(user));
     } catch (error: any) {
       if (error instanceof AppError) {

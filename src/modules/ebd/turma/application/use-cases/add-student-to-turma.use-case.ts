@@ -10,7 +10,10 @@ export class AddStudentToTurmaUseCase {
     private readonly studentRepository: StudentRepository,
   ) {}
 
-  async execute({ id_person, id_turma }: AddStudentToTurmaInputDto): Promise<StudentTurmaRelation> {
+  async execute(
+    { id_person, id_turma }: AddStudentToTurmaInputDto,
+    id_organization?: number | null,
+  ): Promise<StudentTurmaRelation> {
     if (!id_person) {
       throw new AppError('É obrigatório selecionar uma pessoa', 400);
     }
@@ -19,17 +22,17 @@ export class AddStudentToTurmaUseCase {
       throw new AppError('É obrigatório selecionar uma turma', 400);
     }
 
-    const turma = await this.turmaRepository.findById(id_turma);
+    const turma = await this.turmaRepository.findById(id_turma, id_organization);
     if (!turma) {
       throw new AppError('Turma não encontrada', 404);
     }
 
-    const personExists = await this.studentRepository.personExists(id_person);
+    const personExists = await this.studentRepository.personExists(id_person, id_organization);
     if (!personExists) {
       throw new AppError('Pessoa não encontrada', 404);
     }
 
-    let student = await this.studentRepository.findByIdPerson(id_person);
+    let student = await this.studentRepository.findByIdPerson(id_person, id_organization);
     if (!student) {
       student = await this.studentRepository.create(new StudentEntity({ id_person }));
     }
@@ -41,6 +44,7 @@ export class AddStudentToTurmaUseCase {
     const studentLink = await this.turmaRepository.findStudentTurmaLinkByYear(
       student.databaseId,
       turma.id_academic_year,
+      id_organization,
     );
     if (studentLink && studentLink.id_turma === id_turma) {
       throw new AppError('Esse aluno já está vinculado a essa turma', 400);

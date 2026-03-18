@@ -17,7 +17,7 @@ export class CreateStudentController {
     }
 
     try {
-      const student = await this.useCase.execute(req.body);
+      const student = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(StudentOutputMapper.toOutput(student));
     } catch (error: any) {
       if (error instanceof AppError) {

@@ -55,18 +55,22 @@ export type SaveClassSessionAttendanceItem = {
 };
 
 export interface ClassSessionRepository {
-  turmaExists(id_turma: number): Promise<boolean>;
-  teacherExists(id_teacher: number): Promise<boolean>;
-  personExists(id_person: number): Promise<boolean>;
+  turmaExists(id_turma: number, id_organization?: number | null): Promise<boolean>;
+  teacherExists(id_teacher: number, id_organization?: number | null): Promise<boolean>;
+  personExists(id_person: number, id_organization?: number | null): Promise<boolean>;
   isTeacherLinkedToTurma(id_teacher: number, id_turma: number): Promise<boolean>;
   lessonNumberExists(id_turma: number, nr_lesson: number): Promise<boolean>;
-  findById(id: number): Promise<ClassSessionEntity | null>;
-  findDetailedById(id: number): Promise<ClassSessionWithTeacher | null>;
-  listByTurma(id_turma: number): Promise<ClassSessionWithTeacher[]>;
-  listAttendanceByClassSession(id_class_session: number): Promise<ClassSessionAttendanceStudent[]>;
+  findById(id: number, id_organization?: number | null): Promise<ClassSessionEntity | null>;
+  findDetailedById(id: number, id_organization?: number | null): Promise<ClassSessionWithTeacher | null>;
+  listByTurma(id_turma: number, id_organization?: number | null): Promise<ClassSessionWithTeacher[]>;
+  listAttendanceByClassSession(
+    id_class_session: number,
+    id_organization?: number | null,
+  ): Promise<ClassSessionAttendanceStudent[]>;
   saveAttendance(
     id_class_session: number,
     items: SaveClassSessionAttendanceItem[],
+    id_organization?: number | null,
   ): Promise<ClassSessionAttendanceStudent[]>;
   create(data: ClassSessionEntity): Promise<ClassSessionEntity>;
 }

@@ -17,7 +17,7 @@ export class CreateMemberController {
     }
 
     try {
-      const member = await this.useCase.execute(req.body);
+      const member = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(MemberOutputMapper.toOutput(member));
     } catch (error: any) {
       if (error instanceof AppError) {

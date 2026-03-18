@@ -9,18 +9,39 @@ import {
 import { ClassSessionPrismaMapper } from '../prisma/mappers/class-session-prisma.mapper';
 
 export class PrismaClassSessionRepository implements ClassSessionRepository {
-  async turmaExists(id_turma: number): Promise<boolean> {
-    const turma = await prismaClient.turma.findUnique({ where: { id: id_turma } });
+  async turmaExists(id_turma: number, id_organization?: number | null): Promise<boolean> {
+    const turma = await prismaClient.turma.findFirst({
+      where: {
+        id: id_turma,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!turma;
   }
 
-  async teacherExists(id_teacher: number): Promise<boolean> {
-    const teacher = await prismaClient.teacher.findUnique({ where: { id: id_teacher } });
+  async teacherExists(id_teacher: number, id_organization?: number | null): Promise<boolean> {
+    const teacher = await prismaClient.teacher.findFirst({
+      where: {
+        id: id_teacher,
+        ...(typeof id_organization === 'number'
+          ? {
+              person: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
+    });
     return !!teacher;
   }
 
-  async personExists(id_person: number): Promise<boolean> {
-    const person = await prismaClient.person.findUnique({ where: { id: id_person } });
+  async personExists(id_person: number, id_organization?: number | null): Promise<boolean> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        id: id_person,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!person;
   }
 
@@ -41,14 +62,34 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
     return !!session;
   }
 
-  async findById(id: number): Promise<ClassSessionEntity | null> {
-    const classSession = await prismaClient.classSession.findUnique({ where: { id } });
+  async findById(id: number, id_organization?: number | null): Promise<ClassSessionEntity | null> {
+    const classSession = await prismaClient.classSession.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number'
+          ? {
+              turma: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
+    });
     return classSession ? ClassSessionPrismaMapper.toEntity(classSession) : null;
   }
 
-  async findDetailedById(id: number): Promise<ClassSessionWithTeacher | null> {
-    const classSession = await prismaClient.classSession.findUnique({
-      where: { id },
+  async findDetailedById(id: number, id_organization?: number | null): Promise<ClassSessionWithTeacher | null> {
+    const classSession = await prismaClient.classSession.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number'
+          ? {
+              turma: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
       include: {
         turma: {
           select: {
@@ -77,10 +118,19 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
     return classSession ? this.mapDetailedSession(classSession) : null;
   }
 
-  async listByTurma(id_turma: number): Promise<ClassSessionWithTeacher[]> {
+  async listByTurma(id_turma: number, id_organization?: number | null): Promise<ClassSessionWithTeacher[]> {
     const [sessions, enrolledStudentsCount] = await Promise.all([
       prismaClient.classSession.findMany({
-        where: { id_turma },
+        where: {
+          id_turma,
+          ...(typeof id_organization === 'number'
+            ? {
+                turma: {
+                  id_organization,
+                },
+              }
+            : {}),
+        },
         include: {
           teacher: {
             include: {
@@ -105,7 +155,10 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
     return sessions.map((session) => this.mapDetailedSession(session, enrolledStudentsCount));
   }
 
-  async listAttendanceByClassSession(id_class_session: number): Promise<ClassSessionAttendanceStudent[]> {
+  async listAttendanceByClassSession(
+    id_class_session: number,
+    id_organization?: number | null,
+  ): Promise<ClassSessionAttendanceStudent[]> {
     const classSession = await prismaClient.classSession.findUnique({
       where: { id: id_class_session },
       select: { id_turma: true },
@@ -113,6 +166,20 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
 
     if (!classSession) {
       return [];
+    }
+
+    if (typeof id_organization === 'number') {
+      const turma = await prismaClient.turma.findFirst({
+        where: {
+          id: classSession.id_turma,
+          id_organization,
+        },
+        select: { id: true },
+      });
+
+      if (!turma) {
+        return [];
+      }
     }
 
     const [students, attendances] = await Promise.all([
@@ -159,6 +226,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
   async saveAttendance(
     id_class_session: number,
     items: SaveClassSessionAttendanceItem[],
+    id_organization?: number | null,
   ): Promise<ClassSessionAttendanceStudent[]> {
     await prismaClient.$transaction(
       items.map((item) =>
@@ -183,7 +251,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
       ),
     );
 
-    return this.listAttendanceByClassSession(id_class_session);
+    return this.listAttendanceByClassSession(id_class_session, id_organization);
   }
 
   async create(data: ClassSessionEntity): Promise<ClassSessionEntity> {

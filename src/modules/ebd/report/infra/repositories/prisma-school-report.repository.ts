@@ -10,27 +10,47 @@ import {
 type TurmaAccumulator = SchoolAttendanceTurmaReport;
 
 export class PrismaSchoolReportRepository implements SchoolReportRepository {
-  async academicYearExists(id_academic_year: number): Promise<boolean> {
+  async academicYearExists(id_academic_year: number, id_organization?: number | null): Promise<boolean> {
     const academicYear = await prismaClient.academicYear.findUnique({
       where: { id: id_academic_year },
       select: { id: true },
     });
 
-    return !!academicYear;
+    if (!academicYear) {
+      return false;
+    }
+
+    if (typeof id_organization !== 'number') {
+      return true;
+    }
+
+    const scopedYear = await prismaClient.academicYear.findFirst({
+      where: { id: id_academic_year, id_organization },
+      select: { id: true },
+    });
+
+    return !!scopedYear;
   }
 
-  async turmaExists(id_turma: number): Promise<boolean> {
-    const turma = await prismaClient.turma.findUnique({
-      where: { id: id_turma },
+  async turmaExists(id_turma: number, id_organization?: number | null): Promise<boolean> {
+    const turma = await prismaClient.turma.findFirst({
+      where: {
+        id: id_turma,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
       select: { id: true },
     });
 
     return !!turma;
   }
 
-  async getAttendanceReport(filters: SchoolAttendanceReportFilters): Promise<SchoolAttendanceReport> {
+  async getAttendanceReport(
+    filters: SchoolAttendanceReportFilters,
+    id_organization?: number | null,
+  ): Promise<SchoolAttendanceReport> {
     const turmaWhere = {
       id_academic_year: filters.id_academic_year,
+      ...(typeof id_organization === 'number' ? { id_organization } : {}),
       ...(filters.id_turma ? { id: filters.id_turma } : {}),
     };
 

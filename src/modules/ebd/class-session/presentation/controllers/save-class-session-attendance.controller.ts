@@ -8,7 +8,11 @@ export class SaveClassSessionAttendanceController {
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {
       const id_class_session = Number(req.params.id);
-      const attendance = await this.useCase.execute(id_class_session, req.body);
+      const attendance = await this.useCase.execute(
+        id_class_session,
+        req.body,
+        req.activeOrganizationId,
+      );
       return res.status(200).json(attendance);
     } catch (error: any) {
       if (error instanceof AppError) {

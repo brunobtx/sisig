@@ -6,7 +6,10 @@ import { CreateAcademicPeriodInputDto } from '../dtos/create-academic-period-inp
 export class CreateAcademicPeriodUseCase {
   constructor(private readonly repository: AcademicYearRepository) {}
 
-  async execute(data: CreateAcademicPeriodInputDto): Promise<AcademicPeriodEntity> {
+  async execute(
+    data: CreateAcademicPeriodInputDto,
+    id_organization?: number | null,
+  ): Promise<AcademicPeriodEntity> {
     const { id_academy_year, name, dt_start, dt_end, id_person_create } = data;
 
     const start = new Date(dt_start);
@@ -24,12 +27,17 @@ export class CreateAcademicPeriodUseCase {
       throw new AppError('Data de início do Período não pode ser maior que a final', 400);
     }
 
-    const yearExists = await this.repository.academicYearExists(id_academy_year);
+    const yearExists = await this.repository.academicYearExists(id_academy_year, id_organization);
     if (!yearExists) {
       throw new AppError('Ano letivo não encontrado', 404);
     }
 
-    const existingPeriod = await this.repository.findOverlappingPeriod(id_academy_year, start, end);
+    const existingPeriod = await this.repository.findOverlappingPeriod(
+      id_academy_year,
+      start,
+      end,
+      id_organization,
+    );
     if (existingPeriod) {
       throw new AppError('Já existe um período acadêmico cadastrado que engloba essas datas.', 400);
     }

@@ -4,6 +4,7 @@ export type AcademicYearProps = {
   databaseId?: number;
   uuid?: string;
   year: number;
+  id_organization?: number | null;
   id_person_create: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -25,6 +26,10 @@ export class AcademicYearEntity extends Entity<AcademicYearProps> {
 
   get year() {
     return this.props.year;
+  }
+
+  get id_organization() {
+    return this.props.id_organization;
   }
 
   get id_person_create() {

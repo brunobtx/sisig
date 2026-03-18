@@ -8,7 +8,7 @@ export class DeletePersonController {
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {
       const uuid: string = req.params.uuid;
-      const person = await this.useCase.execute(uuid);
+      const person = await this.useCase.execute(uuid, req.activeOrganizationId);
       return res.status(200).json(person);
     } catch (error: any) {
       if (error instanceof AppError) {

@@ -17,7 +17,7 @@ export class CreateAcademicPeriodController {
     }
 
     try {
-      const academicPeriod = await this.useCase.execute(req.body);
+      const academicPeriod = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(AcademicYearOutputMapper.toAcademicPeriodOutput(academicPeriod));
     } catch (error: any) {
       if (error instanceof AppError) {

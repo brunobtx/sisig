@@ -8,6 +8,7 @@ export class AcademicYearPrismaMapper {
         databaseId: data.id,
         uuid: data.uuid,
         year: data.year,
+        id_organization: data.id_organization,
         id_person_create: data.id_person_create,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,

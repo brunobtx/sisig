@@ -9,7 +9,7 @@ export class ListUserAccessControlsController {
     const { userUuid } = req.params;
 
     try {
-      const output = await this.useCase.execute(userUuid);
+      const output = await this.useCase.execute(userUuid, req.activeOrganizationId);
       return res.status(200).json(output);
     } catch (error: any) {
       if (error instanceof AppError) {

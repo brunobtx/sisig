@@ -20,7 +20,10 @@ export class ListTurmaController {
     }
 
     const hasFilters = Object.keys(filters).length > 0;
-    const turmas = await this.useCase.execute(hasFilters ? filters : undefined);
+    const turmas = await this.useCase.execute(
+      hasFilters ? filters : undefined,
+      req.activeOrganizationId,
+    );
     return res.status(200).json(turmas);
   };
 }

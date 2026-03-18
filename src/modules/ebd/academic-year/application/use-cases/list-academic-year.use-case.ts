@@ -4,8 +4,8 @@ import { AcademicYearRepository } from '../../domain/repositories/academic-year.
 export class ListAcademicYearUseCase {
   constructor(private readonly repository: AcademicYearRepository) {}
 
-  async execute(): Promise<AcademicYearOutputDto[]> {
-    const years = await this.repository.findAll();
+  async execute(id_organization?: number | null): Promise<AcademicYearOutputDto[]> {
+    const years = await this.repository.findAll(id_organization);
     return years.map((year) => AcademicYearOutputMapper.toAcademicYearOutput(year));
   }
 }

@@ -12,6 +12,7 @@ export class MemberPrismaMapper {
         phone: person.phone,
         dt_nasc: person.dt_nasc,
         sexo: person.sexo,
+        id_organization: person.id_organization,
         situacao: person.situacao,
         createdAt: person.created_at,
       },

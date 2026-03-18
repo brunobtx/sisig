@@ -9,6 +9,7 @@ export type MemberProps = {
   phone: string;
   dt_nasc: Date;
   sexo: string;
+  id_organization?: number | null;
   situacao: boolean;
   createdAt?: Date | null;
 };
@@ -49,6 +50,10 @@ export class MemberEntity extends Entity<MemberProps> {
 
   get sexo() {
     return this.props.sexo;
+  }
+
+  get id_organization() {
+    return this.props.id_organization;
   }
 
   get situacao() {

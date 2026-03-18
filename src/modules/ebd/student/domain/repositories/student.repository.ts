@@ -14,8 +14,8 @@ export type StudentWithPerson = {
 };
 
 export interface StudentRepository {
-  personExists(id_person: number): Promise<boolean>;
-  findByIdPerson(id_person: number): Promise<StudentEntity | null>;
-  findAllWithPerson(): Promise<StudentWithPerson[]>;
+  personExists(id_person: number, id_organization?: number | null): Promise<boolean>;
+  findByIdPerson(id_person: number, id_organization?: number | null): Promise<StudentEntity | null>;
+  findAllWithPerson(id_organization?: number | null): Promise<StudentWithPerson[]>;
   create(student: StudentEntity): Promise<StudentEntity>;
 }

@@ -13,7 +13,7 @@ export class DetailPersonController {
     }
 
     try {
-      const person = await this.useCase.execute(uuid);
+      const person = await this.useCase.execute(uuid, req.activeOrganizationId);
       return res.status(200).json(person);
     } catch (error: any) {
       if (error instanceof AppError) {

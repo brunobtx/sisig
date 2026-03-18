@@ -6,7 +6,7 @@ import { MemberInputDto } from '../dtos/member-input.dto';
 export class CreateMemberUseCase {
   constructor(private readonly repository: MemberRepository) {}
 
-  async execute(data: MemberInputDto): Promise<MemberEntity> {
+  async execute(data: MemberInputDto, id_organization?: number | null): Promise<MemberEntity> {
     const { name, cpf, email, phone, dt_nasc, sexo, situacao } = data;
 
     if (!email) {
@@ -30,6 +30,7 @@ export class CreateMemberUseCase {
       phone,
       dt_nasc: new Date(dt_nasc),
       sexo,
+      id_organization: typeof id_organization === 'number' ? id_organization : undefined,
       situacao,
       createdAt: new Date(),
     });

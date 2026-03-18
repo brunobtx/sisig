@@ -4,28 +4,51 @@ import { PersonRepository } from '../../domain/repositories/person.repository';
 import { PersonPrismaMapper } from '../prisma/mappers/person-prisma.mapper';
 
 export class PrismaPersonRepository implements PersonRepository {
-  async findById(id: number): Promise<PersonEntity | null> {
-    const person = await prismaClient.person.findUnique({ where: { id } });
+  async findById(id: number, id_organization?: number | null): Promise<PersonEntity | null> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return person ? PersonPrismaMapper.toEntity(person) : null;
   }
 
-  async findByUUID(uuid: string): Promise<PersonEntity | null> {
-    const person = await prismaClient.person.findUnique({ where: { uuid } });
+  async findByUUID(uuid: string, id_organization?: number | null): Promise<PersonEntity | null> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        uuid,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return person ? PersonPrismaMapper.toEntity(person) : null;
   }
 
-  async findByEmail(email: string): Promise<PersonEntity | null> {
-    const person = await prismaClient.person.findUnique({ where: { email } });
+  async findByEmail(email: string, id_organization?: number | null): Promise<PersonEntity | null> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        email,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return person ? PersonPrismaMapper.toEntity(person) : null;
   }
 
-  async findByCpf(cpf: string): Promise<PersonEntity | null> {
-    const person = await prismaClient.person.findUnique({ where: { cpf } });
+  async findByCpf(cpf: string, id_organization?: number | null): Promise<PersonEntity | null> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        cpf,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return person ? PersonPrismaMapper.toEntity(person) : null;
   }
 
-  async findAll(): Promise<PersonEntity[]> {
-    const people = await prismaClient.person.findMany({ orderBy: { created_at: 'desc' } });
+  async findAll(id_organization?: number | null): Promise<PersonEntity[]> {
+    const people = await prismaClient.person.findMany({
+      where: typeof id_organization === 'number' ? { id_organization } : undefined,
+      orderBy: { created_at: 'desc' },
+    });
     return people.map((person) => PersonPrismaMapper.toEntity(person));
   }
 

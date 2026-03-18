@@ -24,6 +24,15 @@ import { UpdateUserAccessControlsController } from '../controllers/update-user-a
 import { UpdateUserAccessControlsValidatorFactory } from '../validators/update-user-access-controls.validator';
 import { ListUserAccessControlsUseCase } from '../../application/use-cases/list-user-access-controls.use-case';
 import { ListUserAccessControlsController } from '../controllers/list-user-access-controls.controller';
+import { PrismaOrganizationRepository } from '../../../../organization/organization/infra/repositories/prisma-organization.repository';
+import { PrismaUserOrganizationAccessRepository } from '../../infra/repositories/prisma-user-organization-access.repository';
+import { ListUserOrganizationAccessesUseCase } from '../../application/use-cases/list-user-organization-accesses.use-case';
+import { UpdateUserOrganizationAccessesUseCase } from '../../application/use-cases/update-user-organization-accesses.use-case';
+import { ListUserOrganizationAccessesController } from '../controllers/list-user-organization-accesses.controller';
+import { UpdateUserOrganizationAccessesController } from '../controllers/update-user-organization-accesses.controller';
+import { UpdateUserOrganizationAccessesValidatorFactory } from '../validators/update-user-organization-accesses.validator';
+import { UserOrganizationContextService } from '../../application/services/user-organization-context.service';
+import { AuthSessionService } from '../../application/services/auth-session.service';
 
 const userRoutes = Router();
 const userRepository = new PrismaUserRepository();
@@ -31,9 +40,17 @@ const personRepository = new PrismaPersonRepository();
 const passwordResetTokenRepository = new PrismaPasswordResetTokenRepository();
 const passwordResetMailer = new ConsolePasswordResetMailer();
 const accessControlRepository = new PrismaAccessControlRepository();
+const organizationRepository = new PrismaOrganizationRepository();
+const userOrganizationAccessRepository = new PrismaUserOrganizationAccessRepository();
+const userOrganizationContextService = new UserOrganizationContextService(
+  personRepository,
+  organizationRepository,
+  userOrganizationAccessRepository,
+);
+const authSessionService = new AuthSessionService();
 
 const createUserController = new CreateUserController(
-  new CreateUserUseCase(userRepository, accessControlRepository),
+  new CreateUserUseCase(userRepository, accessControlRepository, personRepository),
   UserValidatorFactory.create(),
 );
 
@@ -42,7 +59,13 @@ const listUserController = new ListUserController(
 );
 
 const authUserController = new AuthUserController(
-  new AuthUserUseCase(personRepository, userRepository, accessControlRepository),
+  new AuthUserUseCase(
+    personRepository,
+    userRepository,
+    accessControlRepository,
+    userOrganizationContextService,
+    authSessionService,
+  ),
 );
 
 const detailUserController = new DetailUserController(
@@ -66,6 +89,16 @@ const updateUserAccessControlsController = new UpdateUserAccessControlsControlle
 const listUserAccessControlsController = new ListUserAccessControlsController(
   new ListUserAccessControlsUseCase(userRepository, accessControlRepository),
 );
+const listUserOrganizationAccessesController = new ListUserOrganizationAccessesController(
+  new ListUserOrganizationAccessesUseCase(
+    userRepository,
+    userOrganizationContextService,
+  ),
+);
+const updateUserOrganizationAccessesController = new UpdateUserOrganizationAccessesController(
+  new UpdateUserOrganizationAccessesUseCase(userRepository, userOrganizationAccessRepository),
+  UpdateUserOrganizationAccessesValidatorFactory.create(),
+);
 
 userRoutes.get('/users', isAutenticated, requirePermission('users:read'), listUserController.handle);
 userRoutes.post('/users', isAutenticated, requirePermission('users:create'), createUserController.handle);
@@ -84,6 +117,18 @@ userRoutes.put(
   isAutenticated,
   requirePermission('settings:update'),
   updateUserAccessControlsController.handle,
+);
+userRoutes.get(
+  '/users/:userUuid/organization-accesses',
+  isAutenticated,
+  requirePermission('users:read'),
+  listUserOrganizationAccessesController.handle,
+);
+userRoutes.put(
+  '/users/:userUuid/organization-accesses',
+  isAutenticated,
+  requirePermission('users:update'),
+  updateUserOrganizationAccessesController.handle,
 );
 
 export { userRoutes };

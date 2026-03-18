@@ -12,9 +12,11 @@ export class AssignPersonToOrganizationUseCase {
   async execute({
     personUuid,
     organizationUuid,
+    activeOrganizationId,
   }: {
     personUuid: string;
     organizationUuid: string;
+    activeOrganizationId?: number | null;
   }): Promise<PersonEntity> {
     if (!personUuid) {
       throw new AppError('Pessoa inválida.', 400);
@@ -24,7 +26,7 @@ export class AssignPersonToOrganizationUseCase {
       throw new AppError('Organização inválida.', 400);
     }
 
-    const person = await this.personRepository.findByUUID(personUuid);
+    const person = await this.personRepository.findByUUID(personUuid, activeOrganizationId);
     if (!person) {
       throw new AppError('Pessoa não encontrada.', 404);
     }

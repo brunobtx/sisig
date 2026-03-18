@@ -9,12 +9,17 @@ import {
 import { TurmaPrismaMapper } from '../prisma/mappers/turma-prisma.mapper';
 
 export class PrismaTurmaRepository implements TurmaRepository {
-  async findById(id: number): Promise<TurmaEntity | null> {
-    const turma = await prismaClient.turma.findUnique({ where: { id } });
+  async findById(id: number, id_organization?: number | null): Promise<TurmaEntity | null> {
+    const turma = await prismaClient.turma.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return turma ? TurmaPrismaMapper.toEntity(turma) : null;
   }
 
-  async findAll(filters?: TurmaFilters): Promise<TurmaEntity[]> {
+  async findAll(filters?: TurmaFilters, id_organization?: number | null): Promise<TurmaEntity[]> {
     const where: TurmaFilters = {};
     if (filters?.id_class) {
       where.id_class = filters.id_class;
@@ -24,7 +29,13 @@ export class PrismaTurmaRepository implements TurmaRepository {
     }
 
     const turmas = await prismaClient.turma.findMany({
-      where: Object.keys(where).length > 0 ? where : undefined,
+      where:
+        Object.keys(where).length > 0 || typeof id_organization === 'number'
+          ? {
+              ...where,
+              ...(typeof id_organization === 'number' ? { id_organization } : {}),
+            }
+          : undefined,
       orderBy: { created_at: 'desc' },
     });
 
@@ -38,6 +49,7 @@ export class PrismaTurmaRepository implements TurmaRepository {
         uuid: data.id,
         id_class: data.id_class,
         id_academic_year: data.id_academic_year,
+        id_organization: data.id_organization ?? null,
         bo_situacao: data.bo_situacao ?? true,
       } as any,
     });
@@ -45,13 +57,23 @@ export class PrismaTurmaRepository implements TurmaRepository {
     return TurmaPrismaMapper.toEntity(turma);
   }
 
-  async classExists(id: number): Promise<boolean> {
-    const classe = await prismaClient.class.findUnique({ where: { id } });
+  async classExists(id: number, id_organization?: number | null): Promise<boolean> {
+    const classe = await prismaClient.class.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!classe;
   }
 
-  async academicYearExists(id: number): Promise<boolean> {
-    const year = await prismaClient.academicYear.findUnique({ where: { id } });
+  async academicYearExists(id: number, id_organization?: number | null): Promise<boolean> {
+    const year = await prismaClient.academicYear.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!year;
   }
 
@@ -76,9 +98,16 @@ export class PrismaTurmaRepository implements TurmaRepository {
   async findStudentTurmaLinkByYear(
     id_student: number,
     id_academic_year: number,
+    id_organization?: number | null,
   ): Promise<{ id_turma: number } | null> {
     const linked = await prismaClient.turmaStudent.findFirst({
-      where: { id_student, turma: { id_academic_year } },
+      where: {
+        id_student,
+        turma: {
+          id_academic_year,
+          ...(typeof id_organization === 'number' ? { id_organization } : {}),
+        },
+      },
       select: { id_turma: true },
     });
 

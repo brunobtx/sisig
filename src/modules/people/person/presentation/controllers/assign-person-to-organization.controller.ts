@@ -10,7 +10,11 @@ export class AssignPersonToOrganizationController {
     const { personUuid, organizationUuid } = req.params;
 
     try {
-      const person = await this.useCase.execute({ personUuid, organizationUuid });
+      const person = await this.useCase.execute({
+        personUuid,
+        organizationUuid,
+        activeOrganizationId: req.activeOrganizationId,
+      });
       return res.status(200).json(PersonOutputMapper.toOutput(person));
     } catch (error: any) {
       if (error instanceof AppError) {

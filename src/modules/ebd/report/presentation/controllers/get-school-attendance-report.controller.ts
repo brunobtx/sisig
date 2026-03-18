@@ -15,7 +15,7 @@ export class GetSchoolAttendanceReportController {
         id_academic_year,
         trimester,
         id_turma,
-      });
+      }, req.activeOrganizationId);
 
       return res.status(200).json(report);
     } catch (error: any) {

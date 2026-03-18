@@ -9,6 +9,7 @@ export class PrismaAcademicYearRepository implements AcademicYearRepository {
     const academicYear = await prismaClient.academicYear.create({
       data: {
         year: data.year,
+        id_organization: data.id_organization ?? null,
         id_person_create: data.id_person_create,
       },
     });
@@ -16,23 +17,41 @@ export class PrismaAcademicYearRepository implements AcademicYearRepository {
     return AcademicYearPrismaMapper.toAcademicYearEntity(academicYear);
   }
 
-  async findAll(): Promise<AcademicYearEntity[]> {
+  async findAll(id_organization?: number | null): Promise<AcademicYearEntity[]> {
     const years = await prismaClient.academicYear.findMany({
+      where: typeof id_organization === 'number' ? { id_organization } : undefined,
       orderBy: { year: 'desc' },
     });
 
     return years.map((year) => AcademicYearPrismaMapper.toAcademicYearEntity(year));
   }
 
-  async academicYearExists(id: number): Promise<boolean> {
-    const year = await prismaClient.academicYear.findUnique({ where: { id } });
+  async academicYearExists(id: number, id_organization?: number | null): Promise<boolean> {
+    const year = await prismaClient.academicYear.findFirst({
+      where: {
+        id,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!year;
   }
 
-  async findOverlappingPeriod(id_academy_year: number, dt_start: Date, dt_end: Date): Promise<boolean> {
+  async findOverlappingPeriod(
+    id_academy_year: number,
+    dt_start: Date,
+    dt_end: Date,
+    id_organization?: number | null,
+  ): Promise<boolean> {
     const existingPeriod = await prismaClient.academicPeriod.findFirst({
       where: {
         id_academy_year,
+        ...(typeof id_organization === 'number'
+          ? {
+              academicYear: {
+                id_organization,
+              },
+            }
+          : {}),
         dt_start: { lte: dt_start },
         dt_end: { gte: dt_end },
       },

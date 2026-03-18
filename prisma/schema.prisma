@@ -8,50 +8,51 @@ datasource db {
 }
 
 model Person {
-  id                  Int            @id @default(autoincrement())
-  uuid                String         @unique @default(uuid())
-  name                String
-  cpf                 String         @unique
-  phone               String
-  dt_nasc             DateTime
-  sexo                String
-  situacao            Boolean        @default(true)
-  email               String         @unique
-  id_organization     Int?
-  created_at          DateTime?      @default(now())
-  updated_at          DateTime?      @updatedAt
-  ClassSessionPerson  ClassSession[] @relation("PersonClassSessions")
-  Lesson              Lesson[]
-  student             Student?
-  Teacher             Teacher?
-  user                User?
-  organization        Organization?  @relation(fields: [id_organization], references: [id])
+  id                 Int            @id @default(autoincrement())
+  uuid               String         @unique @default(uuid())
+  name               String
+  cpf                String         @unique
+  phone              String
+  dt_nasc            DateTime
+  sexo               String
+  situacao           Boolean        @default(true)
+  email              String         @unique
+  id_organization    Int?
+  created_at         DateTime?      @default(now())
+  updated_at         DateTime?      @updatedAt
+  ClassSessionPerson ClassSession[] @relation("PersonClassSessions")
+  Lesson             Lesson[]
+  student            Student?
+  Teacher            Teacher?
+  user               User?
+  organization       Organization?  @relation(fields: [id_organization], references: [id])
 
   @@index([id_organization])
   @@map("person")
 }
 
 model User {
-  id                 Int       @id @default(autoincrement())
-  uuid               String    @unique @default(uuid())
-  password           String
-  created_at         DateTime? @default(now())
-  updated_at         DateTime? @updatedAt
-  id_person          Int       @unique
-  role               String    @default("viewer")
-  person             Person    @relation(fields: [id_person], references: [id])
-  permissionGroups   UserPermissionGroup[]
+  id                    Int                      @id @default(autoincrement())
+  uuid                  String                   @unique @default(uuid())
+  password              String
+  created_at            DateTime?                @default(now())
+  updated_at            DateTime?                @updatedAt
+  id_person             Int                      @unique
+  role                  String                   @default("viewer")
+  person                Person                   @relation(fields: [id_person], references: [id])
+  permissionGroups      UserPermissionGroup[]
+  organizationAccesses  UserOrganizationAccess[]
   password_reset_tokens PasswordResetToken[]
 
   @@map("user")
 }
 
 model Service {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @default(uuid())
-  code        String    @unique
+  id          Int          @id @default(autoincrement())
+  uuid        String       @unique @default(uuid())
+  code        String       @unique
   name        String
-  created_at  DateTime  @default(now())
+  created_at  DateTime     @default(now())
   features    Feature[]
   permissions Permission[]
 
@@ -59,13 +60,13 @@ model Service {
 }
 
 model Feature {
-  id          Int       @id @default(autoincrement())
-  uuid        String    @unique @default(uuid())
+  id          Int          @id @default(autoincrement())
+  uuid        String       @unique @default(uuid())
   service_id  Int
   code        String
   name        String
-  created_at  DateTime  @default(now())
-  service     Service   @relation(fields: [service_id], references: [id])
+  created_at  DateTime     @default(now())
+  service     Service      @relation(fields: [service_id], references: [id])
   permissions Permission[]
 
   @@unique([service_id, code])
@@ -73,51 +74,51 @@ model Feature {
 }
 
 model Permission {
-  id                   Int                          @id @default(autoincrement())
-  uuid                 String                       @unique @default(uuid())
-  key                  String                       @unique
-  service_id           Int
-  feature_id           Int
-  created_at           DateTime                     @default(now())
-  service              Service                      @relation(fields: [service_id], references: [id])
-  feature              Feature                      @relation(fields: [feature_id], references: [id])
-  groupPermissions     PermissionGroupPermission[]
+  id               Int                         @id @default(autoincrement())
+  uuid             String                      @unique @default(uuid())
+  key              String                      @unique
+  service_id       Int
+  feature_id       Int
+  created_at       DateTime                    @default(now())
+  service          Service                     @relation(fields: [service_id], references: [id])
+  feature          Feature                     @relation(fields: [feature_id], references: [id])
+  groupPermissions PermissionGroupPermission[]
 
   @@unique([service_id, feature_id])
   @@map("permission")
 }
 
 model PermissionGroup {
-  id               Int                          @id @default(autoincrement())
-  uuid             String                       @unique @default(uuid())
-  name             String                       @unique
-  description      String?
-  is_active        Boolean                      @default(true)
-  created_at       DateTime                     @default(now())
-  updated_at       DateTime                     @updatedAt
-  permissions      PermissionGroupPermission[]
-  userAssignments  UserPermissionGroup[]
+  id              Int                         @id @default(autoincrement())
+  uuid            String                      @unique @default(uuid())
+  name            String                      @unique
+  description     String?
+  is_active       Boolean                     @default(true)
+  created_at      DateTime                    @default(now())
+  updated_at      DateTime                    @updatedAt
+  permissions     PermissionGroupPermission[]
+  userAssignments UserPermissionGroup[]
 
   @@map("permission_group")
 }
 
 model PermissionGroupPermission {
-  id                   Int              @id @default(autoincrement())
-  permission_group_id  Int
-  permission_id        Int
-  permissionGroup      PermissionGroup  @relation(fields: [permission_group_id], references: [id])
-  permission           Permission       @relation(fields: [permission_id], references: [id])
+  id                  Int             @id @default(autoincrement())
+  permission_group_id Int
+  permission_id       Int
+  permissionGroup     PermissionGroup @relation(fields: [permission_group_id], references: [id])
+  permission          Permission      @relation(fields: [permission_id], references: [id])
 
   @@unique([permission_group_id, permission_id])
   @@map("permission_group_permission")
 }
 
 model UserPermissionGroup {
-  id                   Int              @id @default(autoincrement())
-  user_id              Int
-  permission_group_id  Int
-  user                 User             @relation(fields: [user_id], references: [id])
-  permissionGroup      PermissionGroup  @relation(fields: [permission_group_id], references: [id])
+  id                  Int             @id @default(autoincrement())
+  user_id             Int
+  permission_group_id Int
+  user                User            @relation(fields: [user_id], references: [id])
+  permissionGroup     PermissionGroup @relation(fields: [permission_group_id], references: [id])
 
   @@unique([user_id, permission_group_id])
   @@map("user_permission_group")
@@ -141,28 +142,31 @@ model PasswordResetToken {
 }
 
 model Class {
-  id             Int            @id @default(autoincrement())
-  uuid           String         @unique @default(uuid())
-  name           String
-  idade_in       Int
-  idade_fn       Int
-  bo_situacao    Boolean        @default(true)
-  created_at     DateTime       @default(now())
-  description    String?        @db.VarChar(500)
-  turmas         Turma[]
+  id              Int           @id @default(autoincrement())
+  uuid            String        @unique @default(uuid())
+  name            String
+  idade_in        Int
+  idade_fn        Int
+  id_organization Int?
+  bo_situacao     Boolean       @default(true)
+  created_at      DateTime      @default(now())
+  description     String?       @db.VarChar(500)
+  organization    Organization? @relation(fields: [id_organization], references: [id])
+  turmas          Turma[]
 
+  @@index([id_organization])
   @@map("class")
 }
 
 model Teacher {
-  id          Int            @id @default(autoincrement())
-  uuid        String         @unique @default(uuid())
-  id_person   Int            @unique
-  bo_situacao Boolean        @default(true)
-  created_at  DateTime       @default(now())
-  turmas      TurmaTeacher[]
+  id            Int            @id @default(autoincrement())
+  uuid          String         @unique @default(uuid())
+  id_person     Int            @unique
+  bo_situacao   Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  turmas        TurmaTeacher[]
   classSessions ClassSession[]
-  person      Person         @relation(fields: [id_person], references: [id])
+  person        Person         @relation(fields: [id_person], references: [id])
 
   @@map("teacher")
 }
@@ -180,14 +184,14 @@ model TurmaTeacher {
 }
 
 model Student {
-  id          Int            @id @default(autoincrement())
-  uuid        String         @unique @default(uuid())
-  id_person   Int            @unique
-  created_at  DateTime?      @default(now())
-  bo_situacao Boolean        @default(true)
+  id          Int                      @id @default(autoincrement())
+  uuid        String                   @unique @default(uuid())
+  id_person   Int                      @unique
+  created_at  DateTime?                @default(now())
+  bo_situacao Boolean                  @default(true)
   turmas      TurmaStudent[]
   attendances ClassSessionAttendance[]
-  person      Person         @relation(fields: [id_person], references: [id])
+  person      Person                   @relation(fields: [id_person], references: [id])
 
   @@map("student")
 }
@@ -209,35 +213,38 @@ model Turma {
   uuid             String         @unique @default(uuid())
   id_class         Int
   id_academic_year Int
+  id_organization  Int?
   bo_situacao      Boolean        @default(true)
   created_at       DateTime       @default(now())
   class            Class          @relation(fields: [id_class], references: [id])
   academicYear     AcademicYear   @relation(fields: [id_academic_year], references: [id])
+  organization     Organization?  @relation(fields: [id_organization], references: [id])
   teachers         TurmaTeacher[]
   students         TurmaStudent[]
   classSessions    ClassSession[]
   lessons          Lesson[]
 
   @@unique([id_class, id_academic_year])
+  @@index([id_organization])
   @@map("turma")
 }
 
 model ClassSession {
-  id         Int      @id @default(autoincrement())
-  uuid       String   @unique @default(uuid())
-  id_turma   Int
-  dt_session DateTime
-  nr_lesson  Int
-  trimester  Int
-  topic      String   @db.VarChar(255)
-  id_teacher Int
-  notes      String?  @db.VarChar(500)
-  id_person  Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  turma      Turma    @relation(fields: [id_turma], references: [id])
-  person     Person   @relation("PersonClassSessions", fields: [id_person], references: [id])
-  teacher    Teacher  @relation(fields: [id_teacher], references: [id])
+  id          Int                      @id @default(autoincrement())
+  uuid        String                   @unique @default(uuid())
+  id_turma    Int
+  dt_session  DateTime
+  nr_lesson   Int
+  trimester   Int
+  topic       String                   @db.VarChar(255)
+  id_teacher  Int
+  notes       String?                  @db.VarChar(500)
+  id_person   Int
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+  turma       Turma                    @relation(fields: [id_turma], references: [id])
+  person      Person                   @relation("PersonClassSessions", fields: [id_person], references: [id])
+  teacher     Teacher                  @relation(fields: [id_teacher], references: [id])
   attendances ClassSessionAttendance[]
 
   @@unique([id_turma, nr_lesson])
@@ -285,31 +292,56 @@ model AcademicYear {
   id               Int              @id @default(autoincrement())
   uuid             String           @unique @default(uuid())
   year             Int
+  id_organization  Int?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   id_person_create Int
+  organization     Organization?    @relation(fields: [id_organization], references: [id])
   periods          AcademicPeriod[]
   turmas           Turma[]
 
+  @@index([id_organization])
   @@map("academic_year")
 }
 
 model Organization {
-  id            Int             @id @default(autoincrement())
-  uuid          String          @unique @default(uuid())
+  id            Int                      @id @default(autoincrement())
+  uuid          String                   @unique @default(uuid())
   name          String
   type          String
   id_parent     Int?
-  bo_situacao   Boolean         @default(true)
-  created_at    DateTime        @default(now())
-  updated_at    DateTime        @updatedAt
-  parent        Organization?   @relation("OrganizationHierarchy", fields: [id_parent], references: [id])
-  children      Organization[]  @relation("OrganizationHierarchy")
+  bo_situacao   Boolean                  @default(true)
+  created_at    DateTime                 @default(now())
+  updated_at    DateTime                 @updatedAt
+  parent        Organization?            @relation("OrganizationHierarchy", fields: [id_parent], references: [id])
+  children      Organization[]           @relation("OrganizationHierarchy")
   people        Person[]
+  classes       Class[]
+  academicYears AcademicYear[]
+  turmas        Turma[]
+  userAccesses  UserOrganizationAccess[]
 
   @@unique([name, id_parent])
   @@index([id_parent])
   @@map("organization")
+}
+
+model UserOrganizationAccess {
+  id              Int          @id @default(autoincrement())
+  uuid            String       @unique @default(uuid())
+  id_user         Int
+  id_organization Int
+  scope           String       @default("organization")
+  is_default      Boolean      @default(false)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  user            User         @relation(fields: [id_user], references: [id])
+  organization    Organization @relation(fields: [id_organization], references: [id])
+
+  @@unique([id_user, id_organization, scope])
+  @@index([id_user])
+  @@index([id_organization])
+  @@map("user_organization_access")
 }
 
 model AcademicPeriod {

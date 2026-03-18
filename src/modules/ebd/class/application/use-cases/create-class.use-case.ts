@@ -5,11 +5,12 @@ import { CreateClassInputDto } from '../dtos/create-class-input.dto';
 export class CreateClassUseCase {
   constructor(private readonly repository: ClassRepository) {}
 
-  async execute(data: CreateClassInputDto): Promise<ClassEntity> {
+  async execute(data: CreateClassInputDto, id_organization?: number | null): Promise<ClassEntity> {
     const classEntity = new ClassEntity({
       name: data.name,
       idade_in: data.idade_in,
       idade_fn: data.idade_fn,
+      id_organization: typeof id_organization === 'number' ? id_organization : undefined,
       bo_situacao: data.isActive,
       description: data.description,
     });

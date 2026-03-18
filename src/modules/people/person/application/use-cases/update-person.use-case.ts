@@ -6,10 +6,14 @@ import { PersonInputDto } from '../dtos/person-input.dto';
 export class UpdatePersonUseCase {
   constructor(private readonly repository: PersonRepository) {}
 
-  async execute(uuid: string, data: PersonInputDto): Promise<PersonEntity> {
+  async execute(
+    uuid: string,
+    data: PersonInputDto,
+    id_organization?: number | null,
+  ): Promise<PersonEntity> {
     const { name, cpf, email, phone, dt_nasc, sexo, situacao } = data;
 
-    const existingPerson = await this.repository.findByUUID(uuid);
+    const existingPerson = await this.repository.findByUUID(uuid, id_organization);
     if (!existingPerson) {
       throw new AppError('Pessoa não encontrada!', 404);
     }
@@ -35,6 +39,7 @@ export class UpdatePersonUseCase {
         dt_nasc: new Date(dt_nasc),
         sexo,
         situacao,
+        id_organization: existingPerson.id_organization,
         createdAt: existingPerson.createdAt,
       },
       uuid,

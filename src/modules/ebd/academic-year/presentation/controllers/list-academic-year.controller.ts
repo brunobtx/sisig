@@ -4,8 +4,8 @@ import { ListAcademicYearUseCase } from '../../application/use-cases/list-academ
 export class ListAcademicYearController {
   constructor(private readonly useCase: ListAcademicYearUseCase) {}
 
-  handle = async (_req: Request, res: Response): Promise<Response> => {
-    const years = await this.useCase.execute();
+  handle = async (req: Request, res: Response): Promise<Response> => {
+    const years = await this.useCase.execute(req.activeOrganizationId);
     return res.status(200).json(years);
   };
 }

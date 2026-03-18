@@ -8,7 +8,7 @@ export class ListTurmaTeachersController {
   handle = async (req: Request, res: Response): Promise<Response> => {
     try {
       const id_turma = Number(req.params.id);
-      const relations = await this.useCase.execute(id_turma);
+      const relations = await this.useCase.execute(id_turma, req.activeOrganizationId);
       return res.status(200).json(relations);
     } catch (error: any) {
       if (error instanceof AppError) {

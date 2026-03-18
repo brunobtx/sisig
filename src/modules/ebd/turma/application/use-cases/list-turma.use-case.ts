@@ -4,8 +4,11 @@ import { TurmaFilters, TurmaRepository } from '../../domain/repositories/turma.r
 export class ListTurmaUseCase {
   constructor(private readonly repository: TurmaRepository) {}
 
-  async execute(filters?: TurmaFilters): Promise<TurmaOutputDto[]> {
-    const turmas = await this.repository.findAll(filters);
+  async execute(
+    filters?: TurmaFilters,
+    id_organization?: number | null,
+  ): Promise<TurmaOutputDto[]> {
+    const turmas = await this.repository.findAll(filters, id_organization);
     return turmas.map((turma) => TurmaOutputMapper.toOutput(turma));
   }
 }

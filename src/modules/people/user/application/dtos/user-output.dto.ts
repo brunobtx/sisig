@@ -29,6 +29,16 @@ export type AuthUserOutputDto = {
   name: string;
   email: string;
   role: string;
+  organizationAccessMode: 'legacy' | 'scoped';
+  activeOrganizationId: number | null;
+  organizationAccesses: Array<{
+    id_organization: number;
+    organizationUuid: string;
+    organizationName: string;
+    organizationType: string;
+    scope: string;
+    isDefault: boolean;
+  }>;
   permissions: Array<{
     module: string;
     actions: string[];

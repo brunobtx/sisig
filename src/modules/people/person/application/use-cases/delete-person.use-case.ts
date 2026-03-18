@@ -5,8 +5,8 @@ import { PersonRepository } from '../../domain/repositories/person.repository';
 export class DeletePersonUseCase {
   constructor(private readonly repository: PersonRepository) {}
 
-  async execute(uuid: string): Promise<PersonOutputDto> {
-    const person = await this.repository.findByUUID(uuid);
+  async execute(uuid: string, id_organization?: number | null): Promise<PersonOutputDto> {
+    const person = await this.repository.findByUUID(uuid, id_organization);
 
     if (!person) {
       throw new AppError('Pessoa não encontrada', 404);

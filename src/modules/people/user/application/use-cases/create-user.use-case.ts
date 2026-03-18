@@ -2,6 +2,7 @@ import { hash } from 'bcryptjs';
 import { AppError } from '../../../../../shared/errors/AppError';
 import { isValidRole, UserRole } from '../../../../../shared/auth/rbac';
 import { AccessControlRepository } from '../../../../settings/access-control/domain/repositories/access-control.repository';
+import { PersonRepository } from '../../../person/domain/repositories/person.repository';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { UserRepository } from '../../domain/repositories/user.repository';
 import { CreateUserInputDto } from '../dtos/create-user-input.dto';
@@ -10,6 +11,7 @@ export class CreateUserUseCase {
   constructor(
     private readonly repository: UserRepository,
     private readonly accessControlRepository: AccessControlRepository,
+    private readonly personRepository: PersonRepository,
   ) {}
 
   async execute({
@@ -17,13 +19,18 @@ export class CreateUserUseCase {
     password,
     role = 'viewer',
     groupUuids = [],
-  }: CreateUserInputDto): Promise<UserEntity> {
+  }: CreateUserInputDto, id_organization?: number | null): Promise<UserEntity> {
     if (!password) {
       throw new AppError('Senha obrigatória!', 400);
     }
 
     if (!isValidRole(role)) {
       throw new AppError('Role inválido.', 400);
+    }
+
+    const person = await this.personRepository.findById(id_person, id_organization);
+    if (!person) {
+      throw new AppError('Pessoa nao encontrada para criar usuario.', 404);
     }
 
     const userAlreadyExists = await this.repository.findByIdPerson(id_person);

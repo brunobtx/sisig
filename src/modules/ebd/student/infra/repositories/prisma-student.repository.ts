@@ -4,18 +4,42 @@ import { StudentRepository } from '../../domain/repositories/student.repository'
 import { StudentPrismaMapper } from '../prisma/mappers/student-prisma.mapper';
 
 export class PrismaStudentRepository implements StudentRepository {
-  async personExists(id_person: number): Promise<boolean> {
-    const person = await prismaClient.person.findUnique({ where: { id: id_person } });
+  async personExists(id_person: number, id_organization?: number | null): Promise<boolean> {
+    const person = await prismaClient.person.findFirst({
+      where: {
+        id: id_person,
+        ...(typeof id_organization === 'number' ? { id_organization } : {}),
+      },
+    });
     return !!person;
   }
 
-  async findByIdPerson(id_person: number): Promise<StudentEntity | null> {
-    const student = await prismaClient.student.findFirst({ where: { id_person } });
+  async findByIdPerson(id_person: number, id_organization?: number | null): Promise<StudentEntity | null> {
+    const student = await prismaClient.student.findFirst({
+      where: {
+        id_person,
+        ...(typeof id_organization === 'number'
+          ? {
+              person: {
+                id_organization,
+              },
+            }
+          : {}),
+      },
+    });
     return student ? StudentPrismaMapper.toEntity(student) : null;
   }
 
-  async findAllWithPerson() {
+  async findAllWithPerson(id_organization?: number | null) {
     return prismaClient.student.findMany({
+      where:
+        typeof id_organization === 'number'
+          ? {
+              person: {
+                id_organization,
+              },
+            }
+          : undefined,
       include: {
         person: {
           select: { id: true, name: true, email: true, cpf: true },

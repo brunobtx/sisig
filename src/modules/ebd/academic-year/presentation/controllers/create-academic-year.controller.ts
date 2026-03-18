@@ -14,7 +14,7 @@ export class CreateAcademicYearController {
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     if (!req.body?.id_person_create && this.userRepository && req.userId) {
-      const user = await this.userRepository.findByUuid(req.userId);
+      const user = await this.userRepository.findByUuid(req.userId, req.activeOrganizationId);
       if (user) {
         req.body.id_person_create = user.id_person;
       }
@@ -26,7 +26,7 @@ export class CreateAcademicYearController {
     }
 
     try {
-      const academicYear = await this.useCase.execute(req.body);
+      const academicYear = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(AcademicYearOutputMapper.toAcademicYearOutput(academicYear));
     } catch (error: any) {
       if (error instanceof AppError) {

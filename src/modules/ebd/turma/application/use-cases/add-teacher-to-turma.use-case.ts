@@ -10,7 +10,10 @@ export class AddTeacherToTurmaUseCase {
     private readonly teacherRepository: TeacherRepository,
   ) {}
 
-  async execute({ id_person, id_turma }: AddTeacherToTurmaInputDto): Promise<TeacherTurmaRelation> {
+  async execute(
+    { id_person, id_turma }: AddTeacherToTurmaInputDto,
+    id_organization?: number | null,
+  ): Promise<TeacherTurmaRelation> {
     if (!id_person) {
       throw new AppError('É obrigatório selecionar uma pessoa', 400);
     }
@@ -19,17 +22,17 @@ export class AddTeacherToTurmaUseCase {
       throw new AppError('É obrigatório selecionar uma turma', 400);
     }
 
-    const turmaExists = await this.turmaRepository.findById(id_turma);
+    const turmaExists = await this.turmaRepository.findById(id_turma, id_organization);
     if (!turmaExists) {
       throw new AppError('Turma não encontrada', 404);
     }
 
-    const personExists = await this.teacherRepository.personExists(id_person);
+    const personExists = await this.teacherRepository.personExists(id_person, id_organization);
     if (!personExists) {
       throw new AppError('Pessoa não encontrada', 404);
     }
 
-    let teacher = await this.teacherRepository.findByIdPerson(id_person);
+    let teacher = await this.teacherRepository.findByIdPerson(id_person, id_organization);
     if (!teacher) {
       teacher = await this.teacherRepository.create(new TeacherEntity({ id_person }));
     }

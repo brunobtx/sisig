@@ -17,7 +17,7 @@ export class CreatePersonController {
     }
 
     try {
-      const person = await this.useCase.execute(req.body);
+      const person = await this.useCase.execute(req.body, req.activeOrganizationId);
       return res.status(201).json(PersonOutputMapper.toOutput(person));
     } catch (error: any) {
       if (error instanceof AppError) {

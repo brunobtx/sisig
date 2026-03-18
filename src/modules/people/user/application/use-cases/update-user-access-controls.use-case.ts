@@ -9,8 +9,12 @@ export class UpdateUserAccessControlsUseCase {
     private readonly accessControlRepository: AccessControlRepository,
   ) {}
 
-  async execute(userUuid: string, data: UpdateUserAccessControlsInputDto): Promise<void> {
-    const user = await this.userRepository.findByUuid(userUuid);
+  async execute(
+    userUuid: string,
+    data: UpdateUserAccessControlsInputDto,
+    id_organization?: number | null,
+  ): Promise<void> {
+    const user = await this.userRepository.findByUuid(userUuid, id_organization);
 
     if (!user) {
       throw new AppError('Usuario nao encontrado.', 404);

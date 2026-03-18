@@ -4,8 +4,8 @@ import { TeacherRepository } from '../../domain/repositories/teacher.repository'
 export class ListTeacherUseCase {
   constructor(private readonly repository: TeacherRepository) {}
 
-  async execute(): Promise<TeacherOutputDto[]> {
-    const teachers = await this.repository.findAllWithPerson();
+  async execute(id_organization?: number | null): Promise<TeacherOutputDto[]> {
+    const teachers = await this.repository.findAllWithPerson(id_organization);
     return teachers.map((teacher) => ({
       id: teacher.id,
       uuid: teacher.uuid,

@@ -4,16 +4,16 @@ import { ClassSessionRepository, ClassSessionWithTeacher } from '../../domain/re
 export class ListClassSessionByTurmaUseCase {
   constructor(private readonly repository: ClassSessionRepository) {}
 
-  async execute(id_turma: number): Promise<ClassSessionWithTeacher[]> {
+  async execute(id_turma: number, id_organization?: number | null): Promise<ClassSessionWithTeacher[]> {
     if (!id_turma) {
       throw new AppError('É obrigatório informar a turma', 400);
     }
 
-    const turmaExists = await this.repository.turmaExists(id_turma);
+    const turmaExists = await this.repository.turmaExists(id_turma, id_organization);
     if (!turmaExists) {
       throw new AppError('Turma não encontrada', 404);
     }
 
-    return this.repository.listByTurma(id_turma);
+    return this.repository.listByTurma(id_turma, id_organization);
   }
 }

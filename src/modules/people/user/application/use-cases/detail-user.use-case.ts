@@ -9,14 +9,14 @@ export class DetailUserUseCase {
     private readonly personRepository: PersonRepository,
   ) {}
 
-  async execute(userUuid: string): Promise<UserOutputDto> {
-    const user = await this.userRepository.findByUuid(userUuid);
+  async execute(userUuid: string, id_organization?: number | null): Promise<UserOutputDto> {
+    const user = await this.userRepository.findByUuid(userUuid, id_organization);
 
     if (!user) {
       throw new AppError('Usuário não encontrado', 404);
     }
 
-    const person = await this.personRepository.findById(user.id_person);
+    const person = await this.personRepository.findById(user.id_person, id_organization);
 
     if (!person) {
       throw new AppError('Pessoa vinculada ao usuário não encontrada', 404);

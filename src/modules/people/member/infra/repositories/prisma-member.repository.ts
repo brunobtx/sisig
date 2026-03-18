@@ -24,6 +24,7 @@ export class PrismaMemberRepository implements MemberRepository {
         phone: member.phone,
         dt_nasc: member.dt_nasc,
         sexo: member.sexo,
+        id_organization: member.id_organization ?? null,
         situacao: member.situacao,
         created_at: member.createdAt ?? new Date(),
       },

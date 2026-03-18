@@ -6,19 +6,19 @@ import { CreateTeacherInputDto } from '../dtos/create-teacher-input.dto';
 export class CreateTeacherUseCase {
   constructor(private readonly repository: TeacherRepository) {}
 
-  async execute(data: CreateTeacherInputDto): Promise<TeacherEntity> {
+  async execute(data: CreateTeacherInputDto, id_organization?: number | null): Promise<TeacherEntity> {
     const { id_person } = data;
 
     if (!id_person) {
       throw new AppError('É Obrigatório selecionar uma pessoa!', 400);
     }
 
-    const personExists = await this.repository.personExists(id_person);
+    const personExists = await this.repository.personExists(id_person, id_organization);
     if (!personExists) {
       throw new AppError('Pessoa não encontrada!', 404);
     }
 
-    const teacher = await this.repository.findByIdPerson(id_person);
+    const teacher = await this.repository.findByIdPerson(id_person, id_organization);
     if (teacher) {
       throw new AppError('Pessoa já é um professor!', 400);
     }

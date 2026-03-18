@@ -21,6 +21,7 @@ async function syncAllSeedSequences(): Promise<void> {
     'person',
     'user',
     'organization',
+    'user_organization_access',
     'service',
     'feature',
     'permission',
@@ -32,6 +33,52 @@ async function syncAllSeedSequences(): Promise<void> {
   for (const table of tables) {
     await syncSerialSequence(table);
   }
+}
+
+async function resolveSeedOrganization() {
+  const seedOrganizationName =
+    process.env.SEED_ORGANIZATION_NAME ?? 'Organizacao Principal';
+  const seedOrganizationType =
+    process.env.SEED_ORGANIZATION_TYPE ?? 'headquarters';
+
+  const activeLeafOrganizations = await prisma.organization.findMany({
+    where: {
+      bo_situacao: true,
+      children: {
+        none: {
+          bo_situacao: true,
+        },
+      },
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+
+  if (activeLeafOrganizations.length > 0) {
+    return activeLeafOrganizations[0];
+  }
+
+  const firstActiveOrganization = await prisma.organization.findFirst({
+    where: {
+      bo_situacao: true,
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+
+  if (firstActiveOrganization) {
+    return firstActiveOrganization;
+  }
+
+  return prisma.organization.create({
+    data: {
+      name: seedOrganizationName,
+      type: seedOrganizationType,
+      bo_situacao: true,
+    },
+  });
 }
 
 async function main() {
@@ -47,6 +94,7 @@ async function main() {
   const seedAdminGroupName = process.env.SEED_ADMIN_GROUP_NAME ?? 'admin_full_access';
   const seedAdminGroupDescription =
     process.env.SEED_ADMIN_GROUP_DESCRIPTION ?? 'Grupo administrador com acesso total ao sistema';
+  const seedOrganization = await resolveSeedOrganization();
 
   let person = await prisma.person.findUnique({ where: { email: seedEmail } });
 
@@ -64,6 +112,7 @@ async function main() {
         sexo: seedSexo,
         situacao: true,
         email: seedEmail,
+        id_organization: seedOrganization.id,
       },
     });
   } else {
@@ -77,6 +126,7 @@ async function main() {
         situacao: true,
         email: seedEmail,
         cpf: seedCpf,
+        id_organization: person.id_organization ?? seedOrganization.id,
       },
     });
   }
@@ -217,10 +267,49 @@ async function main() {
     update: {},
   });
 
+  await prisma.userOrganizationAccess.updateMany({
+    where: {
+      id_user: adminUser.id,
+    },
+    data: {
+      is_default: false,
+    },
+  });
+
+  await prisma.userOrganizationAccess.deleteMany({
+    where: {
+      id_user: adminUser.id,
+      id_organization: person.id_organization ?? seedOrganization.id,
+      scope: {
+        not: 'all',
+      },
+    },
+  });
+
+  await prisma.userOrganizationAccess.upsert({
+    where: {
+      id_user_id_organization_scope: {
+        id_user: adminUser.id,
+        id_organization: person.id_organization ?? seedOrganization.id,
+        scope: 'all',
+      },
+    },
+    create: {
+      id_user: adminUser.id,
+      id_organization: person.id_organization ?? seedOrganization.id,
+      scope: 'all',
+      is_default: true,
+    },
+    update: {
+      is_default: true,
+    },
+  });
+
   console.log('Seed concluido com sucesso.');
   console.log(`Usuario: ${seedEmail}`);
   console.log(`Senha: ${seedPassword}`);
   console.log(`Grupo admin: ${seedAdminGroupName}`);
+  console.log(`Organizacao padrao: ${person.id_organization ?? seedOrganization.id}`);
 }
 
 async function run() {

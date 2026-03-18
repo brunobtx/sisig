@@ -5,6 +5,7 @@ export type TurmaProps = {
   uuid?: string;
   id_class: number;
   id_academic_year: number;
+  id_organization?: number | null;
   bo_situacao?: boolean;
   created_at?: Date | null;
 };
@@ -30,6 +31,10 @@ export class TurmaEntity extends Entity<TurmaProps> {
 
   get id_academic_year() {
     return this.props.id_academic_year;
+  }
+
+  get id_organization() {
+    return this.props.id_organization;
   }
 
   get bo_situacao() {

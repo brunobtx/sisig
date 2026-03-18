@@ -51,7 +51,10 @@ export type SchoolAttendanceReport = {
 };
 
 export interface SchoolReportRepository {
-  academicYearExists(id_academic_year: number): Promise<boolean>;
-  turmaExists(id_turma: number): Promise<boolean>;
-  getAttendanceReport(filters: SchoolAttendanceReportFilters): Promise<SchoolAttendanceReport>;
+  academicYearExists(id_academic_year: number, id_organization?: number | null): Promise<boolean>;
+  turmaExists(id_turma: number, id_organization?: number | null): Promise<boolean>;
+  getAttendanceReport(
+    filters: SchoolAttendanceReportFilters,
+    id_organization?: number | null,
+  ): Promise<SchoolAttendanceReport>;
 }

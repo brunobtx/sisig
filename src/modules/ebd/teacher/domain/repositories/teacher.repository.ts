@@ -14,8 +14,8 @@ export type TeacherWithPerson = {
 };
 
 export interface TeacherRepository {
-  personExists(id_person: number): Promise<boolean>;
-  findByIdPerson(id_person: number): Promise<TeacherEntity | null>;
-  findAllWithPerson(): Promise<TeacherWithPerson[]>;
+  personExists(id_person: number, id_organization?: number | null): Promise<boolean>;
+  findByIdPerson(id_person: number, id_organization?: number | null): Promise<TeacherEntity | null>;
+  findAllWithPerson(id_organization?: number | null): Promise<TeacherWithPerson[]>;
   create(teacher: TeacherEntity): Promise<TeacherEntity>;
 }

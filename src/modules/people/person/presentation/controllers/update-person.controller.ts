@@ -19,7 +19,7 @@ export class UpdatePersonController {
     }
 
     try {
-      const entity = await this.useCase.execute(uuid, input);
+      const entity = await this.useCase.execute(uuid, input, req.activeOrganizationId);
       return res.status(200).json(PersonOutputMapper.toOutput(entity));
     } catch (error: any) {
       if (error instanceof AppError) {
