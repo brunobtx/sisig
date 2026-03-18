@@ -9,7 +9,7 @@ export class RequestPasswordResetController {
     const { email } = req.body;
 
     try {
-      await this.useCase.execute({ email });
+      req.auditContext = await this.useCase.execute({ email });
 
       return res.status(200).json({
         message: 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha.',

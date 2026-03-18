@@ -7,6 +7,8 @@ import type {
 declare global {
   namespace Express {
     interface Request {
+      requestId?: string;
+      auditContext?: Record<string, unknown>;
       userId: string;
       userRole?: UserRole;
       userPermissions?: Permission[];

@@ -11,6 +11,7 @@ import { AssignUserToAccessControlGroupController } from '../controllers/assign-
 import { ListAccessControlController } from '../controllers/list-access-control.controller';
 import { UpdateAccessControlController } from '../controllers/update-access-control.controller';
 import { AccessControlValidatorFactory } from '../validators/access-control.validator';
+import { auditRoute } from '../../../../../shared/infra/middlewares/audit-route';
 
 const accessControlRoutes = Router();
 
@@ -34,16 +35,51 @@ accessControlRoutes.use(isAutenticated);
 accessControlRoutes.post(
   '/access-controls/groups',
   requirePermission('settings:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'create_access_control_group',
+    entityType: 'permission_group',
+    entityUuid: ({ responseBody }) => (responseBody as { uuid?: string } | undefined)?.uuid ?? null,
+    entityId: ({ responseBody }) => (responseBody as { id?: number | string } | undefined)?.id ?? null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Grupo de permissao criado com sucesso.'
+        : 'Falha ao criar grupo de permissao.',
+  }),
   createAccessControlController.handle,
 );
 accessControlRoutes.put(
   '/access-controls/groups/:groupUuid',
   requirePermission('settings:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'update_access_control_group',
+    entityType: 'permission_group',
+    entityUuid: ({ req }) => req.params.groupUuid,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Grupo de permissao atualizado com sucesso.'
+        : 'Falha ao atualizar grupo de permissao.',
+  }),
   updateAccessControlController.handle,
 );
 accessControlRoutes.put(
   '/access-controls/groups/:groupUuid/users/:userUuid',
   requirePermission('settings:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'assign_user_to_access_control_group',
+    entityType: 'user',
+    entityUuid: ({ req }) => req.params.userUuid,
+    afterData: ({ req }) => ({
+      userUuid: req.params.userUuid,
+      groupUuid: req.params.groupUuid,
+    }),
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Usuario vinculado ao grupo de permissao.'
+        : 'Falha ao vincular usuario ao grupo de permissao.',
+  }),
   assignUserToAccessControlGroupController.handle,
 );
 accessControlRoutes.get('/access-controls/groups', requirePermission('settings:read'), listAccessControlController.handle);

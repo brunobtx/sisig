@@ -4,6 +4,15 @@ import { UserRepository } from '../../domain/repositories/user.repository';
 import { PasswordResetTokenRepository } from '../../domain/repositories/password-reset-token.repository';
 import { PasswordResetMailer } from '../services/password-reset-mailer';
 import { RequestPasswordResetInputDto } from '../dtos/password-reset.dto';
+import { UserOrganizationContextService } from '../services/user-organization-context.service';
+
+export type RequestPasswordResetAuditContext = {
+  email: string;
+  userUuid: string | null;
+  personUuid: string | null;
+  organizationId: number | null;
+  matchedUser: boolean;
+};
 
 export class RequestUserPasswordResetUseCase {
   constructor(
@@ -11,19 +20,32 @@ export class RequestUserPasswordResetUseCase {
     private readonly userRepository: UserRepository,
     private readonly passwordResetTokenRepository: PasswordResetTokenRepository,
     private readonly passwordResetMailer: PasswordResetMailer,
+    private readonly userOrganizationContextService: UserOrganizationContextService,
   ) {}
 
-  async execute({ email }: RequestPasswordResetInputDto): Promise<void> {
+  async execute({ email }: RequestPasswordResetInputDto): Promise<RequestPasswordResetAuditContext> {
     const person = await this.personRepository.findByEmail(email);
 
     if (!person?.databaseId || !person.email) {
-      return;
+      return {
+        email,
+        userUuid: null,
+        personUuid: null,
+        organizationId: null,
+        matchedUser: false,
+      };
     }
 
     const user = await this.userRepository.findByIdPerson(person.databaseId);
 
     if (!user?.databaseId) {
-      return;
+      return {
+        email,
+        userUuid: null,
+        personUuid: person.uuid ?? null,
+        organizationId: person.id_organization ?? null,
+        matchedUser: false,
+      };
     }
 
     const expiresInMinutes = Number(process.env.RESET_PASSWORD_TOKEN_EXPIRES_IN_MINUTES ?? 30);
@@ -53,5 +75,19 @@ export class RequestUserPasswordResetUseCase {
       resetLink,
       expiresInMinutes: safeExpiresInMinutes,
     });
+
+    const organizationContext =
+      await this.userOrganizationContextService.resolveRequiredByUser(
+        user.databaseId,
+        user.id_person,
+      );
+
+    return {
+      email,
+      userUuid: user.uuid ?? null,
+      personUuid: person.uuid ?? null,
+      organizationId: organizationContext.activeOrganizationId,
+      matchedUser: true,
+    };
   }
 }

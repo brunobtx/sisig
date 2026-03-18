@@ -5,11 +5,13 @@ import { router } from './routes';
 import cors from 'cors';
 import 'dotenv/config';
 import { AppError } from './shared/errors/AppError';
+import { attachRequestMetadata } from './shared/infra/middlewares/request-metadata';
 
 const app = express();
 const port = Number(process.env.APP_PORT ?? 3333);
 const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
 
+app.use(attachRequestMetadata);
 app.use(express.json())
 app.use(
   cors({

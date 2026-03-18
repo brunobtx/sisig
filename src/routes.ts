@@ -13,6 +13,7 @@ import { memberRoutes } from "./modules/people/member/presentation/routes/member
 import { lessonRoutes } from "./modules/ebd/lesson/presentation/routes/lesson.routes"
 import { academicYearRoutes } from "./modules/ebd/academic-year/presentation/routes/academic-year.routes"
 import { accessControlRoutes } from "./modules/settings/access-control/presentation/routes/access-control.routes"
+import { auditRoutes } from "./modules/settings/audit/presentation/routes/audit.routes"
 import { organizationRoutes } from "./modules/organization/organization/presentation/routes/organization.routes"
 
 const router = Router();
@@ -29,6 +30,7 @@ router.use('/api', reportRoutes)
 router.use('/api', lessonRoutes)
 router.use('/api', academicYearRoutes)
 router.use('/api', accessControlRoutes)
+router.use('/api', auditRoutes)
 router.use('/api', organizationRoutes)
 
 

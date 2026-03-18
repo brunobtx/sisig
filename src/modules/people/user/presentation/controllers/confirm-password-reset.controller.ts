@@ -9,7 +9,7 @@ export class ConfirmPasswordResetController {
     const { token, password } = req.body;
 
     try {
-      await this.useCase.execute({ token, password });
+      req.auditContext = await this.useCase.execute({ token, password });
       return res.status(200).json({ message: 'Senha atualizada com sucesso.' });
     } catch (error: any) {
       if (error instanceof AppError) {

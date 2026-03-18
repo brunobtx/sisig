@@ -344,6 +344,43 @@ model UserOrganizationAccess {
   @@map("user_organization_access")
 }
 
+model AuditLog {
+  id                     Int      @id @default(autoincrement())
+  uuid                   String   @unique @default(uuid())
+  request_id             String?
+  action_at              DateTime @default(now())
+  created_at             DateTime @default(now())
+  actor_user_uuid        String?
+  actor_role             String?
+  active_organization_id Int?
+  target_organization_id Int?
+  module                 String
+  action                 String
+  entity_type            String?
+  entity_id              String?
+  entity_uuid            String?
+  route                  String
+  method                 String
+  status                 String
+  summary                String?
+  ip_address             String?
+  user_agent             String?
+  before_data            Json?
+  after_data             Json?
+  metadata               Json?
+
+  @@index([request_id])
+  @@index([action_at])
+  @@index([module])
+  @@index([action])
+  @@index([status])
+  @@index([actor_user_uuid])
+  @@index([active_organization_id])
+  @@index([target_organization_id])
+  @@index([entity_type, entity_uuid])
+  @@map("audit_log")
+}
+
 model AcademicPeriod {
   id               Int          @id @default(autoincrement())
   name             String

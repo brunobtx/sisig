@@ -33,6 +33,7 @@ import { UpdateUserOrganizationAccessesController } from '../controllers/update-
 import { UpdateUserOrganizationAccessesValidatorFactory } from '../validators/update-user-organization-accesses.validator';
 import { UserOrganizationContextService } from '../../application/services/user-organization-context.service';
 import { AuthSessionService } from '../../application/services/auth-session.service';
+import { auditRoute } from '../../../../../shared/infra/middlewares/audit-route';
 
 const userRoutes = Router();
 const userRepository = new PrismaUserRepository();
@@ -77,10 +78,16 @@ const requestPasswordResetController = new RequestPasswordResetController(
     userRepository,
     passwordResetTokenRepository,
     passwordResetMailer,
+    userOrganizationContextService,
   ),
 );
 const confirmPasswordResetController = new ConfirmPasswordResetController(
-  new ConfirmUserPasswordResetUseCase(userRepository, passwordResetTokenRepository),
+  new ConfirmUserPasswordResetUseCase(
+    personRepository,
+    userRepository,
+    passwordResetTokenRepository,
+    userOrganizationContextService,
+  ),
 );
 const updateUserAccessControlsController = new UpdateUserAccessControlsController(
   new UpdateUserAccessControlsUseCase(userRepository, accessControlRepository),
@@ -101,10 +108,77 @@ const updateUserOrganizationAccessesController = new UpdateUserOrganizationAcces
 );
 
 userRoutes.get('/users', isAutenticated, requirePermission('users:read'), listUserController.handle);
-userRoutes.post('/users', isAutenticated, requirePermission('users:create'), createUserController.handle);
-userRoutes.post('/session', authUserController.handle);
-userRoutes.post('/password/forgot', requestPasswordResetController.handle);
-userRoutes.post('/password/reset', confirmPasswordResetController.handle);
+userRoutes.post(
+  '/users',
+  isAutenticated,
+  requirePermission('users:create'),
+  auditRoute({
+    module: 'users',
+    action: 'create_user',
+    entityType: 'user',
+    entityUuid: ({ responseBody }) => (responseBody as { uuid?: string } | undefined)?.uuid ?? null,
+    entityId: ({ responseBody }) => (responseBody as { id?: number | string } | undefined)?.id ?? null,
+    summary: ({ status }) =>
+      status === 'success' ? 'Usuario criado com sucesso.' : 'Falha ao criar usuario.',
+  }),
+  createUserController.handle,
+);
+userRoutes.post(
+  '/session',
+  auditRoute({
+    module: 'auth',
+    action: 'login',
+    entityType: 'user',
+    entityUuid: ({ responseBody }) => (responseBody as { id?: string } | undefined)?.id ?? null,
+    targetOrganizationId: ({ responseBody }) =>
+      (responseBody as { activeOrganizationId?: number | null } | undefined)?.activeOrganizationId ?? null,
+    summary: ({ status }) =>
+      status === 'success' ? 'Login realizado com sucesso.' : 'Falha na tentativa de login.',
+  }),
+  authUserController.handle,
+);
+userRoutes.post(
+  '/password/forgot',
+  auditRoute({
+    module: 'auth',
+    action: 'request_password_reset',
+    entityType: 'user',
+    entityUuid: ({ req }) =>
+      typeof req.auditContext?.userUuid === 'string' ? req.auditContext.userUuid : null,
+    targetOrganizationId: ({ req }) =>
+      typeof req.auditContext?.organizationId === 'number' ? req.auditContext.organizationId : null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Solicitacao de redefinicao de senha registrada.'
+        : 'Falha ao solicitar redefinicao de senha.',
+    afterData: ({ req, responseBody }) => ({
+      ...responseBody as Record<string, unknown>,
+      matchedUser:
+        typeof req.auditContext?.matchedUser === 'boolean'
+          ? req.auditContext.matchedUser
+          : false,
+    }),
+  }),
+  requestPasswordResetController.handle,
+);
+userRoutes.post(
+  '/password/reset',
+  auditRoute({
+    module: 'auth',
+    action: 'confirm_password_reset',
+    entityType: 'user',
+    entityUuid: ({ req }) =>
+      typeof req.auditContext?.userUuid === 'string' ? req.auditContext.userUuid : null,
+    targetOrganizationId: ({ req }) =>
+      typeof req.auditContext?.organizationId === 'number' ? req.auditContext.organizationId : null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Senha redefinida com sucesso.'
+        : 'Falha ao redefinir senha.',
+    afterData: ({ responseBody }) => responseBody,
+  }),
+  confirmPasswordResetController.handle,
+);
 userRoutes.get('/users/:uuid', isAutenticated, requirePermission('users:read'), detailUserController.handle);
 userRoutes.get(
   '/users/:userUuid/access-controls',
@@ -116,6 +190,19 @@ userRoutes.put(
   '/users/:userUuid/access-controls',
   isAutenticated,
   requirePermission('settings:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'update_user_access_controls',
+    entityType: 'user',
+    entityUuid: ({ req }) => req.params.userUuid,
+    afterData: ({ req }) => ({
+      groupUuids: Array.isArray(req.body?.groupUuids) ? req.body.groupUuids : [],
+    }),
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Controles de acesso do usuario atualizados.'
+        : 'Falha ao atualizar controles de acesso do usuario.',
+  }),
   updateUserAccessControlsController.handle,
 );
 userRoutes.get(
@@ -128,6 +215,17 @@ userRoutes.put(
   '/users/:userUuid/organization-accesses',
   isAutenticated,
   requirePermission('users:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'update_user_organization_accesses',
+    entityType: 'user',
+    entityUuid: ({ req }) => req.params.userUuid,
+    afterData: ({ req }) => req.body,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Acessos organizacionais do usuario atualizados.'
+        : 'Falha ao atualizar acessos organizacionais do usuario.',
+  }),
   updateUserOrganizationAccessesController.handle,
 );
 

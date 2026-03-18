@@ -13,6 +13,7 @@ import { DetailOrganizationController } from '../controllers/detail-organization
 import { ListOrganizationController } from '../controllers/list-organization.controller';
 import { UpdateOrganizationController } from '../controllers/update-organization.controller';
 import { OrganizationValidatorFactory } from '../validators/organization.validator';
+import { auditRoute } from '../../../../../shared/infra/middlewares/audit-route';
 
 const organizationRoutes = Router();
 const repository = new PrismaOrganizationRepository();
@@ -41,6 +42,21 @@ organizationRoutes.use(isAutenticated);
 organizationRoutes.post(
   '/organizations',
   requirePermission('organization:create'),
+  auditRoute({
+    module: 'organization',
+    action: 'create_organization',
+    entityType: 'organization',
+    entityUuid: ({ responseBody }) => (responseBody as { uuid?: string } | undefined)?.uuid ?? null,
+    entityId: ({ responseBody }) => (responseBody as { id?: number | string } | undefined)?.id ?? null,
+    targetOrganizationId: ({ responseBody }) =>
+      typeof (responseBody as { id?: number } | undefined)?.id === 'number'
+        ? (responseBody as { id?: number }).id ?? null
+        : null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Organizacao criada com sucesso.'
+        : 'Falha ao criar organizacao.',
+  }),
   createOrganizationController.handle,
 );
 organizationRoutes.get(
@@ -56,11 +72,39 @@ organizationRoutes.get(
 organizationRoutes.patch(
   '/organizations/:uuid',
   requirePermission('organization:update'),
+  auditRoute({
+    module: 'organization',
+    action: 'update_organization',
+    entityType: 'organization',
+    entityUuid: ({ req }) => req.params.uuid,
+    targetOrganizationId: ({ responseBody }) =>
+      typeof (responseBody as { id?: number } | undefined)?.id === 'number'
+        ? (responseBody as { id?: number }).id ?? null
+        : null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Organizacao atualizada com sucesso.'
+        : 'Falha ao atualizar organizacao.',
+  }),
   updateOrganizationController.handle,
 );
 organizationRoutes.delete(
   '/organizations/:uuid',
   requirePermission('organization:delete'),
+  auditRoute({
+    module: 'organization',
+    action: 'delete_organization',
+    entityType: 'organization',
+    entityUuid: ({ req }) => req.params.uuid,
+    targetOrganizationId: ({ responseBody }) =>
+      typeof (responseBody as { id?: number } | undefined)?.id === 'number'
+        ? (responseBody as { id?: number }).id ?? null
+        : null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Organizacao inativada com sucesso.'
+        : 'Falha ao inativar organizacao.',
+  }),
   deleteOrganizationController.handle,
 );
 
