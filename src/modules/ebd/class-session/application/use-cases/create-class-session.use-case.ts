@@ -27,7 +27,7 @@ export class CreateClassSessionUseCase {
       throw new AppError('O professor informado não está vinculado a essa turma', 400);
     }
 
-    const personExists = await this.repository.personExists(id_person, id_organization);
+    const personExists = await this.repository.personExists(id_person);
     if (!personExists) {
       throw new AppError('Pessoa não encontrada', 404);
     }

@@ -30,6 +30,10 @@ export class AuthUserUseCase {
       throw new AppError('Pessoa inválida para autenticação.', 400);
     }
 
+    if (!person.situacao) {
+      throw new AppError('Pessoa inválida para autenticação.', 400);
+    }
+
     const user = await this.userRepository.findByIdPerson(person.databaseId);
 
     if (!user) {

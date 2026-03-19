@@ -12,6 +12,7 @@ export interface AccessControlRepository {
   list(): Promise<AccessControlEntity[]>;
   create(data: CreateAccessControlRepositoryInput): Promise<AccessControlEntity>;
   updateByUuid(uuid: string, data: CreateAccessControlRepositoryInput): Promise<AccessControlEntity>;
+  inactivateByUuid(uuid: string): Promise<AccessControlEntity>;
   assignUserToGroup(userUuid: string, groupUuid: string): Promise<void>;
   replaceUserGroups(userUuid: string, groupUuids: string[]): Promise<void>;
   listGroupUuidsByUserDatabaseId(userId: number): Promise<string[]>;

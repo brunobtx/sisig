@@ -10,4 +10,5 @@ export interface OrganizationRepository {
   update(organization: OrganizationEntity): Promise<OrganizationEntity>;
   inactivateByUUID(uuid: string): Promise<void>;
   hasActiveChildren(uuid: string): Promise<boolean>;
+  hasLinkedUsers(uuid: string): Promise<boolean>;
 }

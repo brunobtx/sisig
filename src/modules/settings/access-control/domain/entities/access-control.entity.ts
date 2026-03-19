@@ -7,6 +7,7 @@ export type AccessControlProps = {
   description?: string | null;
   is_active?: boolean;
   permissions: string[];
+  linkedUsersCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -42,6 +43,10 @@ export class AccessControlEntity extends Entity<AccessControlProps> {
 
   get permissions() {
     return this.props.permissions ?? [];
+  }
+
+  get linkedUsersCount() {
+    return this.props.linkedUsersCount ?? 0;
   }
 
   get createdAt() {

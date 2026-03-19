@@ -1,4 +1,4 @@
-import { HomeEntity } from '../../../domain/entities/home';
+import { HomeEntity } from '../../../domain/entities/home.entity';
 
 export class HomePrismaMapper {
   static toEntity(data: any): HomeEntity {

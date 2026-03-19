@@ -20,7 +20,7 @@ export class CreateLessonUseCase {
       throw new AppError('Período não encontrado', 404);
     }
 
-    const personExists = await this.repository.personExists(id_person_create, id_organization);
+    const personExists = await this.repository.personExists(id_person_create);
     if (!personExists) {
       throw new AppError('Pessoa criadora não encontrada', 404);
     }

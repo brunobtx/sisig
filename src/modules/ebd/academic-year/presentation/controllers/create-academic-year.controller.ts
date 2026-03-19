@@ -14,7 +14,7 @@ export class CreateAcademicYearController {
 
   handle = async (req: Request, res: Response): Promise<Response> => {
     if (!req.body?.id_person_create && this.userRepository && req.userId) {
-      const user = await this.userRepository.findByUuid(req.userId, req.activeOrganizationId);
+      const user = await this.userRepository.findByUuid(req.userId);
       if (user) {
         req.body.id_person_create = user.id_person;
       }

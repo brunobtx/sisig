@@ -33,6 +33,11 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           },
         },
       },
+      _count: {
+        select: {
+          userAssignments: true,
+        },
+      },
     });
 
     return row ? AccessControlPrismaMapper.toEntity(row) : null;
@@ -48,6 +53,11 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           },
         },
       },
+      _count: {
+        select: {
+          userAssignments: true,
+        },
+      },
     });
 
     return row ? AccessControlPrismaMapper.toEntity(row) : null;
@@ -60,6 +70,11 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           include: {
             permission: true,
           },
+        },
+      },
+      _count: {
+        select: {
+          userAssignments: true,
         },
       },
       orderBy: {
@@ -178,6 +193,11 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           },
         },
       },
+      _count: {
+        select: {
+          userAssignments: true,
+        },
+      },
     });
 
     return AccessControlPrismaMapper.toEntity(group);
@@ -214,6 +234,34 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           },
         },
       },
+      _count: {
+        select: {
+          userAssignments: true,
+        },
+      },
+    });
+
+    return AccessControlPrismaMapper.toEntity(group);
+  }
+
+  async inactivateByUuid(uuid: string): Promise<AccessControlEntity> {
+    const group = await (prismaClient as any).permissionGroup.update({
+      where: { uuid },
+      data: {
+        is_active: false,
+      },
+      include: {
+        permissions: {
+          include: {
+            permission: true,
+          },
+        },
+      },
+      _count: {
+        select: {
+          userAssignments: true,
+        },
+      },
     });
 
     return AccessControlPrismaMapper.toEntity(group);
@@ -231,11 +279,15 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
 
     const group = await (prismaClient as any).permissionGroup.findUnique({
       where: { uuid: groupUuid },
-      select: { id: true },
+      select: { id: true, is_active: true },
     });
 
     if (!group) {
       throw new AppError('Grupo de permissao nao encontrado.', 404);
+    }
+
+    if (!group.is_active) {
+      throw new AppError('Nao e possivel vincular usuario a um grupo de permissao inativo.', 400);
     }
 
     await (prismaClient as any).userPermissionGroup.upsert({
@@ -288,7 +340,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
                 : []),
             ],
           },
-          select: { id: true, uuid: true },
+          select: { id: true, uuid: true, is_active: true },
         })
       : [];
 
@@ -298,6 +350,17 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
       );
       const missingUuids = uniqueGroupUuids.filter((uuid) => !foundGroupReferences.has(uuid));
       throw new AppError(`Grupo(s) de permissao nao encontrado(s): ${missingUuids.join(', ')}`, 404);
+    }
+
+    const inactiveGroups = groups.filter((group) => !group.is_active);
+
+    if (inactiveGroups.length) {
+      throw new AppError(
+        `Nao e possivel vincular grupo(s) de permissao inativo(s): ${inactiveGroups
+          .map((group) => group.uuid)
+          .join(', ')}`,
+        400,
+      );
     }
 
     await (prismaClient as any).$transaction(async (tx: any) => {

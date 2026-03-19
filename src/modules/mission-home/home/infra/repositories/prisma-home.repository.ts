@@ -1,6 +1,6 @@
-import prismaClient from '../../../../../prisma/index';
-import { HomeEntity } from '../../domain/entities/home';
-import { HomeRepository } from '../../domain/repositories/home';
+import prismaClient from '../../../../../prisma';
+import { HomeEntity } from '../../domain/entities/home.entity';
+import { HomeRepository } from '../../domain/repositories/home.repository';
 import { HomePrismaMapper } from '../prisma/mappers/home-prisma.mapper';
 
 const modelName = 'home';

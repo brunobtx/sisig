@@ -3,14 +3,23 @@ import { AppError } from '../../../../../shared/errors/AppError';
 import { LessonOutputMapper } from '../../application/dtos/lesson-output.dto';
 import { CreateLessonUseCase } from '../../application/use-cases/create-lesson.use-case';
 import { LessonValidator } from '../validators/lesson.validator';
+import { UserRepository } from '../../../../people/user/domain/repositories/user.repository';
 
 export class CreateLessonController {
   constructor(
     private readonly useCase: CreateLessonUseCase,
     private readonly validator: LessonValidator,
+    private readonly userRepository?: UserRepository,
   ) {}
 
   handle = async (req: Request, res: Response): Promise<Response> => {
+    if (!req.body?.id_person_create && this.userRepository && req.userId) {
+      const user = await this.userRepository.findByUuid(req.userId);
+      if (user) {
+        req.body.id_person_create = user.id_person;
+      }
+    }
+
     const isValid = this.validator.validate(req.body);
     if (!isValid) {
       return res.status(400).json({ errors: this.validator.errors });

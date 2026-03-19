@@ -113,4 +113,37 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
 
     return !!child;
   }
+
+  async hasLinkedUsers(uuid: string): Promise<boolean> {
+    const organization = await prismaClient.organization.findUnique({
+      where: { uuid },
+      select: { id: true },
+    });
+
+    if (!organization) {
+      return false;
+    }
+
+    const linkedUser = await prismaClient.user.findFirst({
+      where: {
+        OR: [
+          {
+            person: {
+              id_organization: organization.id,
+            },
+          },
+          {
+            organizationAccesses: {
+              some: {
+                id_organization: organization.id,
+              },
+            },
+          },
+        ],
+      },
+      select: { id: true },
+    });
+
+    return !!linkedUser;
+  }
 }

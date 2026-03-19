@@ -26,6 +26,7 @@ const createAcademicYearController = new CreateAcademicYearController(
 const createAcademicPeriodController = new CreateAcademicPeriodController(
   new CreateAcademicPeriodUseCase(repository),
   AcademicPeriodValidatorFactory.create(),
+  userRepository,
 );
 
 const listAcademicYearController = new ListAcademicYearController(

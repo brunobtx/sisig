@@ -1,4 +1,4 @@
-import { HomeEntity } from '../../domain/entities/home';
+import { HomeEntity } from '../../domain/entities/home.entity';
 
 export type HomeOutputDto = {
   id: number | string;

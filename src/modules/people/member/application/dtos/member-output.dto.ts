@@ -8,6 +8,7 @@ export type MemberOutputDto = {
   phone: string;
   dt_nasc: Date;
   sexo: string;
+  id_organization?: number | null;
   situacao: boolean;
 };
 
@@ -21,6 +22,7 @@ export class MemberOutputMapper {
       phone: entity.phone,
       dt_nasc: entity.dt_nasc,
       sexo: entity.sexo,
+      id_organization: entity.id_organization ?? null,
       situacao: entity.situacao,
     };
   }

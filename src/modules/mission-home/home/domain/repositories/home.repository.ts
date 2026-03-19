@@ -1,4 +1,4 @@
-import { HomeEntity } from '../entities/home';
+import { HomeEntity } from '../entities/home.entity';
 
 export interface HomeRepository {
   findByName(name: string): Promise<HomeEntity | null>;

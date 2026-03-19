@@ -3,11 +3,15 @@ import { isAutenticated } from '../../../../../shared/infra/middlewares/isAuthen
 import { requirePermission } from '../../../../../shared/infra/middlewares/authorize';
 import { CreateAccessControlUseCase } from '../../application/use-cases/create-access-control.use-case';
 import { AssignUserToAccessControlGroupUseCase } from '../../application/use-cases/assign-user-to-access-control-group.use-case';
+import { DetailAccessControlUseCase } from '../../application/use-cases/detail-access-control.use-case';
+import { InactivateAccessControlUseCase } from '../../application/use-cases/inactivate-access-control.use-case';
 import { ListAccessControlUseCase } from '../../application/use-cases/list-access-control.use-case';
 import { UpdateAccessControlUseCase } from '../../application/use-cases/update-access-control.use-case';
 import { PrismaAccessControlRepository } from '../../infra/repositories/prisma-access-control.repository';
 import { CreateAccessControlController } from '../controllers/create-access-control.controller';
 import { AssignUserToAccessControlGroupController } from '../controllers/assign-user-to-access-control-group.controller';
+import { DetailAccessControlController } from '../controllers/detail-access-control.controller';
+import { InactivateAccessControlController } from '../controllers/inactivate-access-control.controller';
 import { ListAccessControlController } from '../controllers/list-access-control.controller';
 import { UpdateAccessControlController } from '../controllers/update-access-control.controller';
 import { AccessControlValidatorFactory } from '../validators/access-control.validator';
@@ -28,6 +32,12 @@ const updateAccessControlController = new UpdateAccessControlController(
 );
 const assignUserToAccessControlGroupController = new AssignUserToAccessControlGroupController(
   new AssignUserToAccessControlGroupUseCase(repository),
+);
+const detailAccessControlController = new DetailAccessControlController(
+  new DetailAccessControlUseCase(repository),
+);
+const inactivateAccessControlController = new InactivateAccessControlController(
+  new InactivateAccessControlUseCase(repository),
 );
 const listAccessControlController = new ListAccessControlController(new ListAccessControlUseCase(repository));
 
@@ -83,5 +93,26 @@ accessControlRoutes.put(
   assignUserToAccessControlGroupController.handle,
 );
 accessControlRoutes.get('/access-controls/groups', requirePermission('settings:read'), listAccessControlController.handle);
+accessControlRoutes.get(
+  '/access-controls/groups/:groupUuid',
+  requirePermission('settings:read'),
+  detailAccessControlController.handle,
+);
+accessControlRoutes.delete(
+  '/access-controls/groups/:groupUuid',
+  requirePermission('settings:update'),
+  auditRoute({
+    module: 'settings',
+    action: 'inactivate_access_control_group',
+    entityType: 'permission_group',
+    entityUuid: ({ req }) => req.params.groupUuid,
+    entityId: ({ responseBody }) => (responseBody as { id?: number | string } | undefined)?.id ?? null,
+    summary: ({ status }) =>
+      status === 'success'
+        ? 'Grupo de permissao inativado com sucesso.'
+        : 'Falha ao inativar grupo de permissao.',
+  }),
+  inactivateAccessControlController.handle,
+);
 
 export { accessControlRoutes };

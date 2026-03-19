@@ -7,6 +7,9 @@ export type AccessControlOutputDto = {
   description: string | null;
   is_active: boolean;
   permissions: string[];
+  linked_users_count: number;
+  created_at: Date | undefined;
+  updated_at: Date | undefined;
 };
 
 export class AccessControlOutputMapper {
@@ -18,6 +21,9 @@ export class AccessControlOutputMapper {
       description: entity.description,
       is_active: entity.is_active,
       permissions: entity.permissions,
+      linked_users_count: entity.linkedUsersCount,
+      created_at: entity.createdAt,
+      updated_at: entity.updatedAt,
     };
   }
 }

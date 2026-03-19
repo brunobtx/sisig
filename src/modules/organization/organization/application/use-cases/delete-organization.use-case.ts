@@ -18,6 +18,12 @@ export class DeleteOrganizationUseCase {
       throw new AppError('Não é possível inativar organização com unidades ativas vinculadas.', 400);
     }
 
+    const hasLinkedUsers = await this.repository.hasLinkedUsers(uuid);
+
+    if (hasLinkedUsers) {
+      throw new AppError('Não é possível inativar organização com usuários vinculados.', 400);
+    }
+
     await this.repository.inactivateByUUID(uuid);
 
     return {

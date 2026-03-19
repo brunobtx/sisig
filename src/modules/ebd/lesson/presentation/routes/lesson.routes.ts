@@ -5,13 +5,16 @@ import { CreateLessonUseCase } from '../../application/use-cases/create-lesson.u
 import { PrismaLessonRepository } from '../../infra/repositories/prisma-lesson.repository';
 import { CreateLessonController } from '../controllers/create-lesson.controller';
 import { LessonValidatorFactory } from '../validators/lesson.validator';
+import { PrismaUserRepository } from '../../../../people/user/infra/repositories/prisma-user.repository';
 
 const lessonRoutes = Router();
 
 const repository = new PrismaLessonRepository();
+const userRepository = new PrismaUserRepository();
 const createLessonController = new CreateLessonController(
   new CreateLessonUseCase(repository),
   LessonValidatorFactory.create(),
+  userRepository,
 );
 
 lessonRoutes.use(isAutenticated);

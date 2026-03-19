@@ -4,6 +4,15 @@ import { MemberRepository } from '../../domain/repositories/member.repository';
 import { MemberPrismaMapper } from '../prisma/mappers/member-prisma.mapper';
 
 export class PrismaMemberRepository implements MemberRepository {
+  async findAll(id_organization?: number | null): Promise<MemberEntity[]> {
+    const members = await prismaClient.person.findMany({
+      where: typeof id_organization === 'number' ? { id_organization } : undefined,
+      orderBy: { created_at: 'desc' },
+    });
+
+    return members.map((member) => MemberPrismaMapper.toEntity(member));
+  }
+
   async findByEmail(email: string): Promise<MemberEntity | null> {
     const person = await prismaClient.person.findUnique({ where: { email } });
     return person ? MemberPrismaMapper.toEntity(person) : null;
