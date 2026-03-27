@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "dist/server.js",
-  "packageManager": "npm@10",
+  "packageManager": "npm@10.9.2",
   "engines": {
     "node": ">=22 <25"
   },
