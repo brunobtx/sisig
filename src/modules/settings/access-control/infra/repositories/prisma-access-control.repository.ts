@@ -23,21 +23,23 @@ function parsePermissionKey(key: string): { key: string; serviceCode: string; fe
 }
 
 export class PrismaAccessControlRepository implements AccessControlRepository {
+  private readonly groupDetailsInclude = {
+    permissions: {
+      include: {
+        permission: true,
+      },
+    },
+    _count: {
+      select: {
+        userAssignments: true,
+      },
+    },
+  };
+
   async findByName(name: string): Promise<AccessControlEntity | null> {
     const row = await (prismaClient as any).permissionGroup.findFirst({
       where: { name },
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
     });
 
     return row ? AccessControlPrismaMapper.toEntity(row) : null;
@@ -46,18 +48,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
   async findByUuid(uuid: string): Promise<AccessControlEntity | null> {
     const row = await (prismaClient as any).permissionGroup.findUnique({
       where: { uuid },
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
     });
 
     return row ? AccessControlPrismaMapper.toEntity(row) : null;
@@ -65,18 +56,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
 
   async list(): Promise<AccessControlEntity[]> {
     const rows = await (prismaClient as any).permissionGroup.findMany({
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
       orderBy: {
         created_at: 'desc',
       },
@@ -186,18 +166,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           })),
         },
       },
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
     });
 
     return AccessControlPrismaMapper.toEntity(group);
@@ -227,18 +196,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
           })),
         },
       },
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
     });
 
     return AccessControlPrismaMapper.toEntity(group);
@@ -250,18 +208,7 @@ export class PrismaAccessControlRepository implements AccessControlRepository {
       data: {
         is_active: false,
       },
-      include: {
-        permissions: {
-          include: {
-            permission: true,
-          },
-        },
-      },
-      _count: {
-        select: {
-          userAssignments: true,
-        },
-      },
+      include: this.groupDetailsInclude,
     });
 
     return AccessControlPrismaMapper.toEntity(group);

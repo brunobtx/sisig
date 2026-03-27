@@ -37,8 +37,6 @@ export type SchoolAttendanceStudentReport = {
   id_student: number;
   student_uuid: string;
   name: string;
-  email: string;
-  cpf: string;
   total_present: number;
   total_absent: number;
   attendance_rate: number;

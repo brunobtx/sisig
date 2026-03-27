@@ -42,7 +42,7 @@ export class PrismaTeacherRepository implements TeacherRepository {
           : undefined,
       include: {
         person: {
-          select: { id: true, name: true, email: true, cpf: true },
+          select: { id: true, name: true },
         },
       },
       orderBy: { created_at: 'desc' },

@@ -8,8 +8,6 @@ export type TeacherWithPerson = {
   person: {
     id: number;
     name: string;
-    email: string;
-    cpf: string;
   };
 };
 

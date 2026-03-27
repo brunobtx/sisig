@@ -121,7 +121,7 @@ export class PrismaTurmaRepository implements TurmaRepository {
         teacher: {
           include: {
             person: {
-              select: { id: true, name: true, email: true, cpf: true },
+              select: { id: true, name: true },
             },
           },
         },
@@ -159,7 +159,7 @@ export class PrismaTurmaRepository implements TurmaRepository {
         teacher: {
           include: {
             person: {
-              select: { id: true, name: true, email: true, cpf: true },
+              select: { id: true, name: true },
             },
           },
         },
@@ -198,7 +198,7 @@ export class PrismaTurmaRepository implements TurmaRepository {
         student: {
           include: {
             person: {
-              select: { id: true, name: true, email: true, cpf: true },
+              select: { id: true, name: true },
             },
           },
         },
@@ -236,7 +236,7 @@ export class PrismaTurmaRepository implements TurmaRepository {
         student: {
           include: {
             person: {
-              select: { id: true, name: true, email: true, cpf: true },
+              select: { id: true, name: true },
             },
           },
         },

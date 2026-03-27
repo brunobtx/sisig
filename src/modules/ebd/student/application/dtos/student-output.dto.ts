@@ -8,8 +8,6 @@ export type StudentOutputDto = {
   person?: {
     id: number;
     name: string;
-    email: string;
-    cpf: string;
   };
 };
 

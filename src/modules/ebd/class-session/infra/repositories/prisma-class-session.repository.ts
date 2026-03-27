@@ -103,7 +103,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
         teacher: {
           include: {
             person: {
-              select: { id: true, name: true, email: true, cpf: true },
+              select: { id: true, name: true },
             },
           },
         },
@@ -135,7 +135,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
           teacher: {
             include: {
               person: {
-                select: { id: true, name: true, email: true, cpf: true },
+                select: { id: true, name: true },
               },
             },
           },
@@ -189,7 +189,7 @@ export class PrismaClassSessionRepository implements ClassSessionRepository {
           student: {
             include: {
               person: {
-                select: { id: true, name: true, email: true, cpf: true },
+                select: { id: true, name: true },
               },
             },
           },

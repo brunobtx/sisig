@@ -223,8 +223,6 @@ export class PrismaSchoolReportRepository implements SchoolReportRepository {
               person: {
                 select: {
                   name: true,
-                  email: true,
-                  cpf: true,
                 },
               },
             },
@@ -254,8 +252,6 @@ export class PrismaSchoolReportRepository implements SchoolReportRepository {
           id_student: relation.student.id,
           student_uuid: relation.student.uuid,
           name: relation.student.person.name,
-          email: relation.student.person.email,
-          cpf: relation.student.person.cpf,
           total_present: 0,
           total_absent: 0,
           attendance_rate: 0,

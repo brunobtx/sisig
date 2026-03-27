@@ -24,8 +24,6 @@ export type ClassSessionWithTeacher = {
     person: {
       id: number;
       name: string;
-      email: string;
-      cpf: string;
     };
   };
 };
@@ -42,8 +40,6 @@ export type ClassSessionAttendanceStudent = {
     person: {
       id: number;
       name: string;
-      email: string;
-      cpf: string;
     };
   };
 };

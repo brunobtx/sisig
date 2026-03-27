@@ -10,8 +10,6 @@ export type TeacherTurmaRelation = {
     person: {
       id: number;
       name: string;
-      email: string;
-      cpf: string;
     };
   };
   turma: {
@@ -39,8 +37,6 @@ export type StudentTurmaRelation = {
     person: {
       id: number;
       name: string;
-      email: string;
-      cpf: string;
     };
   };
   turma: {
