@@ -8,7 +8,7 @@ import { AppError } from './shared/errors/AppError';
 import { attachRequestMetadata } from './shared/infra/middlewares/request-metadata';
 
 const app = express();
-const port = Number(process.env.APP_PORT ?? 3333);
+const port = Number(process.env.PORT ?? process.env.APP_PORT ?? 3333);
 const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:3000';
 
 app.use(attachRequestMetadata);
@@ -34,4 +34,4 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-app.listen(port, () => console.log(`Servidor online na porta ${port}!`))
+app.listen(port, () => console.log(`Servidor online na porta ${port}!`));

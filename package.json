@@ -1,10 +1,13 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "server.ts",
+  "main": "dist/server.js",
+  "packageManager": "npm@10",
+  "engines": {
+    "node": ">=22 <25"
+  },
   "license": "MIT",
   "devDependencies": {
-    "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
@@ -15,7 +18,9 @@
     "typescript": "^5.9.2"
   },
   "scripts": {
-    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "start": "node dist/server.js",
     "scaffold:module": "node scripts/scaffold-module.js",
     "prisma:seed": "prisma db seed"
   },
@@ -23,6 +28,7 @@
     "seed": "ts-node --transpile-only prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@types/node": "14.14.31",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
