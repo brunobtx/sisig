@@ -19,6 +19,10 @@ export class RequestPasswordResetController {
         return res.status(error.statusCode).json({ message: error.message });
       }
 
+      console.error('[REQUEST_PASSWORD_RESET] Erro interno ao processar solicitacao.', {
+        message: error instanceof Error ? error.message : String(error),
+      });
+
       return res.status(500).json({ message: 'Erro interno no servidor' });
     }
   };

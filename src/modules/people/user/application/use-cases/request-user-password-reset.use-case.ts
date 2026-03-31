@@ -5,6 +5,7 @@ import { PasswordResetTokenRepository } from '../../domain/repositories/password
 import { PasswordResetMailer } from '../services/password-reset-mailer';
 import { RequestPasswordResetInputDto } from '../dtos/password-reset.dto';
 import { UserOrganizationContextService } from '../services/user-organization-context.service';
+import { AppError } from '../../../../../shared/errors/AppError';
 
 export type RequestPasswordResetAuditContext = {
   email: string;
@@ -24,6 +25,9 @@ export class RequestUserPasswordResetUseCase {
   ) {}
 
   async execute({ email }: RequestPasswordResetInputDto): Promise<RequestPasswordResetAuditContext> {
+    this.passwordResetMailer.assertConfigured();
+
+    const frontendUrl = getPasswordResetFrontendUrl();
     const person = await this.personRepository.findByEmail(email);
 
     if (!person?.databaseId || !person.email) {
@@ -66,15 +70,19 @@ export class RequestUserPasswordResetUseCase {
       expiresAt,
     });
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
     const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(rawToken)}`;
 
-    await this.passwordResetMailer.send({
-      to: person.email,
-      name: person.name,
-      resetLink,
-      expiresInMinutes: safeExpiresInMinutes,
-    });
+    try {
+      await this.passwordResetMailer.send({
+        to: person.email,
+        name: person.name,
+        resetLink,
+        expiresInMinutes: safeExpiresInMinutes,
+      });
+    } catch (error) {
+      await this.passwordResetTokenRepository.invalidateAllByUserId(user.databaseId);
+      throw error;
+    }
 
     const organizationContext =
       await this.userOrganizationContextService.resolveRequiredByUser(
@@ -90,4 +98,21 @@ export class RequestUserPasswordResetUseCase {
       matchedUser: true,
     };
   }
+}
+
+function getPasswordResetFrontendUrl(): string {
+  const frontendUrl = process.env.FRONTEND_URL?.trim();
+
+  if (frontendUrl) {
+    return frontendUrl.replace(/\/+$/, '');
+  }
+
+  if (process.env.NODE_ENV?.trim() === 'production') {
+    throw new AppError(
+      'FRONTEND_URL nao configurado para redefinicao de senha.',
+      500,
+    );
+  }
+
+  return 'http://localhost:3000';
 }
